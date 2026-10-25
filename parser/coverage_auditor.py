@@ -18,7 +18,8 @@ PAGE_NOTE_RE = re.compile(r'^\s*[-－—―]?\s*\d+\s*[-－—―]?\s*$')
 
 def extract_independent_tokens(
     pdf_path: str,
-    page_number: int = 1
+    page_number: int = 1,
+    start_labels: tuple[str, ...] = ()
 ) -> list[str]:
     """
     Extracts financial tokens from the PDF using pdftotext -layout (or PyMuPDF fallback).
@@ -41,9 +42,9 @@ def extract_independent_tokens(
             lines = res.stdout.splitlines()
 
             # Identify data zone: after unit or period headers
-            in_data = False
+            in_data = not start_labels
             for line in lines:
-                if any(kw in line for kw in ("資産の部", "負債の部", "純資産の部", "流動資産", "固定資産")):
+                if not in_data and any(kw in line for kw in start_labels):
                     in_data = True
                 if not in_data:
                     continue
@@ -64,9 +65,9 @@ def extract_independent_tokens(
         page = doc[page_number - 1]
         text = page.get_text("text")
         lines = text.splitlines()
-        in_data = False
+        in_data = not start_labels
         for line in lines:
-            if any(kw in line for kw in ("資産の部", "負債の部", "純資産の部", "流動資産", "固定資産")):
+            if not in_data and any(kw in line for kw in start_labels):
                 in_data = True
             if not in_data:
                 continue
@@ -98,7 +99,8 @@ def audit_token_coverage(
             if v.raw and "cell_missing" not in v.flags:
                 primary_tokens.append(v.raw.strip())
 
-    audit_tokens = extract_independent_tokens(pdf_path, page_number)
+    section_labels = tuple(r.label for r in rows if r.level == 0) or ((rows[0].label,) if rows else ())
+    audit_tokens = extract_independent_tokens(pdf_path, page_number, start_labels=section_labels)
 
     # Normalize tokens for comparison (NFKC and stripping commas)
     def norm(tok: str) -> str:
