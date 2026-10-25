@@ -160,44 +160,72 @@ The evaluation harness strictly separates extraction accuracy from accounting di
 ## 5. Usage Guide
 
 ### 5.1. Evaluate Parser Output
-Run the evaluation CLI with explicit pass/fail gates:
+Run the evaluation CLI with strict discrepancy ledger gating:
 
 ```bash
 python3 eval/evaluate.py \
   --gold eval/gold.json \
   --input path/to/parser_output.json \
-  --fail-under-cell 0.98 \
-  --fail-under-row 0.95 \
-  --fail-under-hierarchy 0.90 \
-  --fail-under-numeric-token 0.95
+  --waivers path/to/waivers.json \
+  --format text
 ```
 
-### 5.2. Output Formats
-- `--format text` (default): Human-readable terminal report with discrepancy breakdown.
+### 5.2. Waivers Input File
+Waivers allow known, reviewed discrepancies to pass CI without relaxing strict gating.
+A waiver file is a JSON list of objects specifying `id`, `type`, `actual`, and a non-empty `reason`:
+
+```json
+[
+  {
+    "id": "R12:C2",
+    "type": "sign_error",
+    "actual": "0",
+    "reason": "Source document uses triangle zero (△0); parser normalized to 0. Verified acceptable."
+  }
+]
+```
+
+- A waiver matches only if `id`, `type`, AND `actual` all match the ledger entry.
+- Empty or whitespace reasons trigger a harness error (exit 2).
+- Waived entries remain fully visible in the ledger.
+- Unmatched (stale) waivers are listed as non-gating warnings.
+
+### 5.3. Output Formats
+- `--format text` (default): Human-readable terminal report: Discrepancy Ledger -> Stale Waivers -> Diagnostics -> Single Rates Footer.
 - `--format markdown`: Clean Markdown table suitable for PR comments or CI summaries.
 - `--format json`: Structured JSON dictionary for programmatic ingestion.
 
-### 5.3. Exit Codes
-- `0`: All specified `--fail-under-*` thresholds passed.
-- `1`: One or more thresholds failed, or input parsing error occurred.
-- Note: If no `--fail-under-*` flags are specified, the harness reports metrics and exits with `0` (zero hidden thresholds).
+### 5.4. Exit Codes
+- `0`: No unwaived discrepancies exist (empty ledger, or all entries waived).
+- `1`: One or more unwaived discrepancies exist.
+- `2`: Harness error (unreadable/schema-invalid input, malformed waiver file, or deprecated `--fail-under-*` flags).
 
 ---
 
 ## 6. Self-Evaluation & Fault-Injection Tests
 
-A comprehensive automated test suite (`eval/test_fault_injections.py`) validates the harness against 8 scenarios:
+A comprehensive automated test suite (`eval/test_fault_injections.py`) validates the harness against 18 scenarios:
 
 | # | Test Scenario | Expected Result | Verified By |
 |---|---|---|---|
-| 1 | **Gold vs. Gold** | 100% on all metrics, 20/20 accounting checks pass | `test_01_gold_vs_gold_self_eval` |
-| 2 | **Drop Middle Row (`仕掛品`)** | Sequence alignment realigns; row & cell recall drop; dropped row listed | `test_02_fault_drop_middle_row` |
-| 3 | **Duplicate Row (`売掛金`)** | Row precision drops (43/44); extra row detected | `test_03_fault_duplicate_row` |
-| 4 | **Swap Columns** | Row match 100%; cell accuracy drops to ~2.7% | `test_04_fault_swap_columns` |
-| 5 | **`"△0"` $\rightarrow$ `"0"`** | Detected as exact string mismatch on `貸倒引当金` col 2 | `test_05_fault_negative_zero_marker` |
-| 6 | **`"－"` $\rightarrow$ `"0"`** | Fails exact and numeric match (nil only matches nil) | `test_06_fault_nil_to_zero` |
-| 7 | **`"－"` $\rightarrow$ `null`** | Fails value cell match (missing cell) | `test_07_fault_nil_to_null` |
-| 8 | **Remove `△` from Contra** | Fails cell match and triggers accounting check `INCONSISTENCY` | `test_08_fault_remove_delta_contra` |
+| 1 | **Gold vs. Gold** | Empty ledger (0 discrepancies), exit 0, rates 100% | `test_01_gold_vs_gold_self_eval` |
+| 2 | **Drop Middle Row (`仕掛品`)** | Exactly 1 `missing_row` (CRITICAL, `subsumed_cells=2`, `orphaned_children=[]`) | `test_02_fault_drop_middle_row` |
+| 3 | **Duplicate Row (`売掛金`)** | Exactly 1 `extra_row` (CRITICAL, `EXTRA:P6`) | `test_03_fault_duplicate_row` |
+| 4 | **Swap Columns** | Exactly 72 `wrong_printed_value` entries (36 differing rows x 2 cols) | `test_04_fault_swap_columns` |
+| 5 | **`"△0"` $\rightarrow$ `"0"`** | Exactly 1 `sign_error` on `R12:C2` (`numeric_match=True`) | `test_05_fault_negative_zero_marker` |
+| 6 | **`"－"` $\rightarrow$ `"0"`** | Exactly 1 `nil_zero` on `R26:C1` (`numeric_match=False`) | `test_06_fault_nil_to_zero` |
+| 7 | **`"－"` $\rightarrow$ `null`** | Exactly 1 `nil_missing` on `R26:C1` | `test_07_fault_nil_to_null` |
+| 8 | **Remove `△` from Contra** | Exactly 1 `sign_error` on `R17:C1`; net buildings diagnostic fails | `test_08_fault_remove_delta_contra` |
+| 9 | **Wrong Label (Gap Pairing)** | Exactly 1 `wrong_label` on `R5:label`; hierarchy still checked | `test_09_fault_wrong_label` |
+| 10 | **Wrong Metadata Unit** | Exactly 1 `wrong_metadata` on `META:unit` (CRITICAL) | `test_10_fault_wrong_metadata_unit` |
+| 11 | **Wrong Column Count** | Exactly 1 `wrong_metadata` on `META:columns`; extra col ignored in cells | `test_11_fault_wrong_metadata_columns` |
+| 12 | **Duplicate Row Tie-Break** | First occurrence matches gold; later occurrence is extra | `test_12_duplicate_row_tie_break` |
+| 13 | **Drop Row 1 No Cascade** | Exactly 1 `missing_row` on `R1:row` (`orphaned_children=[2,14,43]`) | `test_13_fault_drop_row_1_no_cascade` |
+| 14 | **Waiver Applies** | Matching waiver marks entry waived=True; exit 0 | `test_14_waiver_applies` |
+| 15 | **Waiver Actual Changed** | Mismatched actual keeps entry unwaived; exit 1 | `test_15_waiver_does_not_apply_when_actual_changed` |
+| 16 | **Malformed Waiver File** | Empty reason triggers harness error exit 2 | `test_16_malformed_waiver_exit_2` |
+| 17 | **Malformed Parser Input** | Missing rows triggers harness error exit 2 | `test_17_malformed_input_exit_2` |
+| 18 | **Stale Waiver Warning** | Unused waiver listed as non-gating warning | `test_18_stale_waiver_listed` |
 
 Run the test suite:
 ```bash
