@@ -50,15 +50,16 @@ UrAI/
 │   ├── renderer.py               # JSON serialization and GFM Markdown renderer (with ⚑ flags)
 │   └── pipeline.py               # 12-stage pipeline coordinator
 ├── tests/
-│   ├── create_synthetic.py       # PyMuPDF generator for synthetic smoke test PDFs
-│   ├── fixtures/                 # Generated synthetic PDF test fixtures
-│   │   ├── stress_3col.pdf       # 3-period comparison columns test
-│   │   ├── stress_neg_marker.pdf # ▲ markers and detached marker merge test
-│   │   └── stress_flatindent.pdf # Completely flat x0 indentation fallback test
-│   └── test_parser.py            # Pytest suite covering unit & synthetic smoke tests
+│   └── test_parser.py            # Pytest suite covering unit tests and live sample validation
 ├── eval/
 │   ├── gold.json                 # Hand-built gold table (pending human verification)
-│   └── evaluate.py               # Evaluation harness comparing parser output against gold.json
+│   ├── evaluate.py               # Evaluation harness comparing parser output against gold.json
+│   ├── SPEC.md                   # Formal evaluation specification (metrics, alignment, schemas)
+│   ├── README.md                 # Eval directory documentation & transcription protocol
+│   ├── transcription_log.md      # Two-pass independent transcription & verification log
+│   ├── hierarchy_tree.txt        # Visually-verified indented hierarchy tree
+│   ├── verify_hierarchy.py       # Hierarchy verification script checking gold.json against tree
+│   └── test_fault_injections.py  # Pytest suite with automated fault injection tests
 ├── output/
 │   ├── balance_sheet_p1.json     # Sample output JSON for balance_sheet.pdf
 │   └── balance_sheet_p1.md       # Sample output Markdown for balance_sheet.pdf
@@ -116,7 +117,7 @@ Output metrics reported:
 
 ### Run Automated Tests
 
-Run pytest across all unit tests and synthetic smoke test PDFs:
+Run pytest across all unit tests and live sample validation:
 ```bash
 python3 -m pytest tests/ -v
 ```

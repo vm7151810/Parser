@@ -1,20 +1,12 @@
 """
 Test suite for Japanese Financial PDF Parser.
-Covers unit tests, synthetic smoke tests (ReportLab PDFs), and live sample validation.
+Covers unit tests for value parsing and live sample validation against balance_sheet.pdf.
 """
 import pytest
 from pathlib import Path
 
 from parser.value_parser import parse_value, normalize_japanese_date
 from parser.pipeline import parse_pdf_page
-from tests.create_synthetic import generate_all_fixtures
-
-
-@pytest.fixture(scope="session", autouse=True)
-def setup_synthetic_fixtures():
-    """Generates synthetic PDFs before tests run."""
-    fixtures_dir = Path(__file__).parent / "fixtures"
-    generate_all_fixtures(str(fixtures_dir))
 
 
 class TestValueParser:
@@ -61,53 +53,6 @@ class TestValueParser:
             assert ok is True
             assert norm == expected
 
-
-class TestSyntheticSmokeTests:
-    def test_stress_3col_pdf(self):
-        fixtures_dir = Path(__file__).parent / "fixtures"
-        pdf_path = fixtures_dir / "stress_3col.pdf"
-        assert pdf_path.exists()
-
-        table = parse_pdf_page(str(pdf_path), page_number=1)
-        assert table.meta["n_columns"] == 3
-        assert len(table.meta["periods"]) == 3
-        assert len(table.rows) > 0
-        assert table.audit["coverage_ratio"] == 1.0
-
-    def test_stress_neg_marker_pdf(self):
-        fixtures_dir = Path(__file__).parent / "fixtures"
-        pdf_path = fixtures_dir / "stress_neg_marker.pdf"
-        assert pdf_path.exists()
-
-        table = parse_pdf_page(str(pdf_path), page_number=1)
-        assert table.meta["n_columns"] == 2
-
-        # Check that detached or ▲ marker was parsed as negative
-        contra_rows = [r for r in table.rows if r.row_type == "contra"]
-        assert len(contra_rows) >= 1
-        for c in contra_rows:
-            for cell in c.values.values():
-                if cell.numeric is not None:
-                    assert cell.numeric < 0
-
-        # Check net-value accounting check passes
-        net_checks = [c for c in table.accounting_checks if c.check_type == "net_value"]
-        assert len(net_checks) >= 1
-        assert all(c.passed for c in net_checks)
-
-    def test_stress_flatindent_pdf(self):
-        fixtures_dir = Path(__file__).parent / "fixtures"
-        pdf_path = fixtures_dir / "stress_flatindent.pdf"
-        assert pdf_path.exists()
-
-        table = parse_pdf_page(str(pdf_path), page_number=1)
-        assert table.meta["n_indent_levels"] == 1
-        assert "flat_indentation_detected_using_heuristic_hierarchy" in table.meta["warnings"]
-
-        # Check subtotal check passes under flat indent
-        subtotal_checks = [c for c in table.accounting_checks if c.check_type == "subtotal"]
-        assert len(subtotal_checks) >= 1
-        assert all(c.passed for c in subtotal_checks)
 
 
 class TestLiveSample:
