@@ -1,7 +1,7 @@
 # Evaluation Specification for Japanese Financial Table Parsers
 
-**Specification Version**: 2.0  
-**Status**: Normative Specification (Draft for Verification)  
+**Specification Version**: 2.1  
+**Status**: Normative Specification (Verified against Reports A, B, and C)  
 **Target Document**: `balance_sheet.pdf` (Page 1 / Document Page 4: 連結貸借対照表 / Consolidated Balance Sheet — 資産の部)  
 **Authors**: Independent Evaluation & Specification Working Group  
 
@@ -74,19 +74,20 @@ Every parser cell is evaluated under five distinct semantic interpretations:
 - **Transcription Rule**: Stored as exact string `"－"`, **NEVER as `null` and NEVER as `"0"`**.
 - **Nil Matching Invariant**: **Nil matches ONLY nil**:
   - A gold nil marker compared against parser `"0"`, `0.0`, or `null` **FAILS** exact string match.
-  - A gold nil marker compared against parser `"0"` or `0.0` **FAILS** normalized numeric match.
-  - In normalized numeric matching, any standard Unicode dash variant (`"－"`, `"-"`, `"—"`, `"―"`, `"‐"`, `"−"`) matches another nil marker, evaluating to zero in accounting roll-ups.
+  - A gold nil marker compared against parser `"0"` or `0.0` **FAILS** normalized numeric match (emits discrepancy `nil_zero`).
+  - In normalized numeric matching, any standard Unicode dash variant (`"－"`, `"-"`, `"—"`, `"―"`, `"‐"`, `"−"`) matches another nil marker, evaluating to zero in accounting roll-ups. When glyphs differ (e.g. `"－"` vs `"-"`), exact string match fails (`wrong_printed_value`), but `numeric_match: True` is recorded.
 
-### 2.4. Missing Cell (`cell_missing`) vs. Null
+### 2.4. Missing Cell vs. Null
 - In No-Value Category rows, empty space is expected and valid, evaluated as JSON `null`.
-- In Value rows, empty space signifies an omitted or failed cell extraction. A parser emitting `null` for a value cell MUST be scored as a value cell mismatch (`reason: "value_mismatch"` or `"cell_missing"`).
-- A missing value cell MUST NOT match an explicit nil indicator.
+- In Value rows, empty space signifies an omitted or failed cell extraction. A parser emitting `null` for a value cell MUST be scored as a discrepancy:
+  - If gold was an explicit nil dash and parser emitted `null`: classified as `nil_missing`.
+  - If gold was a numeric value and parser emitted `null`: classified as `wrong_printed_value`.
 
 ### 2.5. Negative Zero (`"△0"`)
 - **Occurrence**: Row 12 (`貸倒引当金`), Column 2 (`当連結会計年度`).
 - **Accounting Semantics**: Indicates an active contra allowance balance that rounds down to zero thousand yen under source truncation (*千円未満切捨て*), or a nominal negative provision, presented with Japanese negative marker `△` (U+25B3).
 - **Representation**:
-  - Exact printed string: MUST be `"△0"`. Emitting `"0"`, `"0.0"`, or `"-0"` FAILS exact string accuracy.
+  - Exact printed string: MUST be `"△0"`. Emitting `"0"`, `"0.0"`, or `"-0"` emits a `sign_error` discrepancy (same magnitude $0.0$, differing sign marker).
   - Normalized numeric value: Evaluates to `0.0` with negative sign flag `True` ($-0.0$). In accounting sums, it contributes `0.0`.
 
 ---
@@ -162,7 +163,7 @@ Visual indentation is the sole authoritative source of document structure.
 
 ## 4. Accounting Relations and the Rounding Model
 
-The ground truth specifies exactly 10 accounting checks across both reporting periods (20 checks total). All checks serve as **diagnostics** to audit transcription and extraction integrity.
+The ground truth specifies exactly 10 accounting checks across both reporting periods (20 checks total). All checks serve as **diagnostics** to audit transcription and extraction integrity and are **non-gating** in the discrepancy ledger.
 
 ### 4.1. The 10 Canonical Accounting Checks
 
@@ -187,16 +188,15 @@ The ground truth specifies exactly 10 accounting checks across both reporting pe
 3. **Explicit Sign Convention**: In `eval/gold.json`, all addends carry `"sign": 1` because printed contra accounts contain explicit negative markers (`△`) and parse directly to negative floats.
 
 ### 4.3. Rounding Models: Symmetric vs. Directional Truncation
-1. **Symmetric Half-Up Bound (Status Quo)**:
+1. **Symmetric Half-Up Bound (Evaluator Implementation)**:
    $$\text{Tolerance} = \max(1, \lceil n / 2 \rceil)$$
-   A check passes if $|\text{stated} - \text{computed}| \le \text{Tolerance}$.
+   A check passes as `SOURCE_ROUNDING` if $|\text{stated} - \text{computed}| \le \text{Tolerance}$.
 2. **Directional Truncation Reality (*千円未満切捨て*)**:
    As proven in Report B, the underlying financial system truncates fractional yen amounts. Under truncation:
    - Sums MUST have non-negative differences: $0 \le (\text{stated} - \text{computed}) \le n - 1$.
    - Net deductions MUST have non-positive differences: $-1 \le (\text{stated} - \text{computed}) \le 0$.
-3. **Normative Evaluation Model [DECISION NEEDED / Option C Recommended]**:
-   - For pass/fail evaluation: Retain symmetric bound $\pm \max(1, \lceil n/2 \rceil)$ to remain generalizable to filings using round-to-nearest (*四捨五入*).
-   - For diagnostic auditing: Flag deviations violating directional truncation bounds as `suspect_direction`.
+3. **Status [As Decided in Chat B/C]**:
+   Accounting checks are evaluated as **diagnostics only** and do not generate discrepancy ledger entries. This ensures extraction accuracy scoring is never compromised by publisher-side rounding artifacts.
 
 ---
 
@@ -207,7 +207,7 @@ Line item labels repeat across multiple distinct sections in Japanese financial 
 - `その他`: Appears 4 times (Rows 11, 27, 33, 40).
 - `リース資産`: Appears 2 times (Rows 23, 32).
 
-Unordered map lookups by label string will produce fatal collisions.
+Unordered map lookups by label string produce fatal collisions.
 
 ### 5.1. Label Normalization Function $N(\cdot)$
 To ensure robust string comparison:
@@ -220,47 +220,73 @@ Given gold label sequence $G = [g_1, \dots, g_m]$ and parser label sequence $P =
 - **Scoring Function**:
   $$S(g_i, p_j) = \begin{cases} +2.0 & \text{if } N(g_i) == N(p_j) \land N(g_i) \ne "" \\ +1.0 & \text{if } \text{LevSim}(N(g_i), N(p_j)) \ge 0.8 \\ -1.5 & \text{otherwise (mismatch penalty)} \end{cases}$$
 - **Gap Penalty**: $-1.0$ (for row insertions or deletions).
-- **Page-Order Invariant**: Alignment strictly preserves monotonic reading order.
-- **Unaligned Gold Row Penalty**: If a gold row $g_i$ has no aligned parser row ($g_i, \emptyset$), **ALL of its cells (both value and no-value) MUST be scored as mismatches**.
+- **Deterministic Tie-Breaking**:
+  - When parser has adjacent duplicate rows, the earlier occurrence matches gold and the later is marked extra (prefer left on tie with diag).
+  - When gold has adjacent duplicate rows, the earlier occurrence matches parser and the later is marked missing (prefer up on tie with diag).
+- **Gap-Pairing (Label Drift Detection)**:
+  Within an alignment gap between matched anchor rows, if an unmatched gold row and unmatched parser row share an identical, non-empty value tuple, they are paired:
+  - Emits `wrong_label` on `R{n}:label` (Severity: `ERROR`).
+  - Hierarchy for the row is compared against gold, avoiding cascading cell errors.
+- **Unaligned Gold Row Penalty (`missing_row`)**:
+  If a gold row $g_i$ has no aligned parser row ($g_i, \emptyset$), a `missing_row` discrepancy (Severity: `CRITICAL`) is emitted. It subsumes all value cells (`subsumed_cells`) and records any child rows orphaned by its removal (`orphaned_children`).
 
 ---
 
 ## 6. Discrepancy Taxonomy, Severities, Waivers, and Exit Semantics
 
-The evaluator records an enumerated **Discrepancy Ledger** as its primary output.
+The evaluator outputs an enumerated **Discrepancy Ledger** as its primary output.
 
 ### 6.1. Closed Discrepancy Taxonomy
 
-| Discrepancy Type | Description | Default Severity | Exit Code Impact |
-| :--- | :--- | :---: | :---: |
-| `MISSING_ROW` | Gold row missing from sequence alignment (dropped row) | `FATAL` | Exit 1 |
-| `EXTRA_ROW` | Parser emitted an unaligned extra row (phantom / spurious row) | `ERROR` | Exit 1 |
-| `WRONG_PRINTED_VALUE` | Verbatim printed string mismatch in value cell | `ERROR` | Exit 1 |
-| `SIGN_ERROR` | Extracted numeric value has wrong sign ($+$ vs $-$) | `ERROR` | Exit 1 |
-| `NIL_TO_ZERO` | Explicit nil dash (`－`) was transcribed as `"0"` or `0.0` | `ERROR` | Exit 1 |
-| `NIL_TO_MISSING` | Explicit nil dash (`－`) was transcribed as `null` or missing | `ERROR` | Exit 1 |
-| `MISSING_TO_NIL` | Empty whitespace cell was transcribed as explicit nil (`－`) | `ERROR` | Exit 1 |
-| `WRONG_PARENT` | `parent_label` or 1-indexed `parent_index` mismatch | `ERROR` | Exit 1 |
-| `ACCOUNTING_INCONSISTENCY` | Arithmetic check exceeds rounding tolerance | `WARNING` | Exit 0 (Diagnostic) |
+| Discrepancy Code | Severity | Scope | Description / Trigger Condition |
+| :--- | :---: | :---: | :--- |
+| `missing_row` | `CRITICAL` | Row | Gold row completely absent from sequence alignment. Subsumes value cells and logs orphaned children. |
+| `extra_row` | `CRITICAL` | Row | Spurious or duplicated row emitted by parser with no counterpart in gold reference. |
+| `wrong_metadata` | `CRITICAL` | Metadata | Metadata mismatch in currency unit (`META:unit`), column count (`META:columns`), or column headers (`META:col{n}`). |
+| `wrong_label` | `ERROR` | Row | Row paired across gap by identical value tuple but has modified label text. |
+| `wrong_parent` | `ERROR` | Hierarchy | Aligned row's visual parent (`parent_label` or resolved `parent_index`) does not match gold parent. |
+| `wrong_printed_value` | `ERROR` | Cell | Verbatim printed string or numeric value mismatch on aligned cell (excluding pure sign, nil↔zero, or nil↔missing). |
+| `sign_error` | `ERROR` | Cell | Magnitude matches within $10^{-4}$, but sign marker or direction differs (e.g. `△` omitted, or `△0` vs `0`). |
+| `nil_zero` | `ERROR` | Cell | Explicit nil dash (`－`) converted to numeric zero (`"0"` or `0.0`), or vice versa. |
+| `nil_missing` | `ERROR` | Cell | Explicit nil dash (`－`) omitted as `null`/empty, or header null cell populated with a nil dash. |
+
+*Note on Accounting Relations*: Excluded from the discrepancy ledger; reported strictly under non-gating `diagnostics`.
 
 ### 6.2. Ledger Entry Data Model
-Every discrepancy entry MUST contain:
-- `id`: Stable identifier formatted as `R{row_index}_C{col_index}_{type}` (e.g. `R12_C2_WRONG_PRINTED_VALUE`).
-- `row_index`: 1-indexed row number in gold (1..43).
-- `column_index`: 1-indexed column number (1..2) or `null` for row-level discrepancies.
+Every discrepancy entry in the ledger contains:
+- `id`: Stable identifier formatted as:
+  - `META:unit`, `META:columns`, `META:col{n}` (Metadata)
+  - `R{n}:row` (Missing row)
+  - `EXTRA:P{n}` (Extra parser row)
+  - `R{n}:label` (Wrong label)
+  - `R{n}:parent` (Wrong parent)
+  - `R{n}:C{col}` (Cell mismatch)
 - `type`: Discrepancy code from the closed taxonomy.
-- `severity`: `FATAL`, `ERROR`, `WARNING`, or `INFO`.
-- `expected`: Gold value or expected parent.
-- `actual`: Parser value or observed parent.
-- `waived`: Boolean flag indicating if a valid waiver applies.
-- `waiver_reason`: Non-empty string documenting justification when waived.
+- `severity`: `CRITICAL` or `ERROR`.
+- `expected`: Gold value or expected parent specification.
+- `actual`: Parser value or observed parent specification.
+- `detail`: Structured dictionary (e.g. `{"numeric_match": bool}`).
+- `waived`: Boolean flag indicating if an explicit waiver matched.
+- `waiver_reason`: Non-empty string documenting justification when waived (`null` if unwaived).
 
 ### 6.3. Waiver Schema and Exit Semantics
-- **Strict by Default**: The evaluator exits with status code `0` if and only if the discrepancy ledger contains **zero unwaived entries** with severity `ERROR` or `FATAL`.
-- **Waivers**: Waivers MUST be supplied via an explicit configuration file (`--waivers waivers.json`). Each waiver entry requires:
-  - `selector`: Matching `id`, or `(row_index, column_index, type)`.
-  - `reason`: Mandatory non-empty string explaining the domain justification.
-- **Transparency**: Waived discrepancies remain visible in the ledger output and markdown summary, marked with `[WAIVED]`.
+- **Waiver Format**: Supplied via an external JSON file (`--waivers waivers.json`) containing an array of objects:
+  ```json
+  [
+    {
+      "id": "META:col1",
+      "type": "wrong_metadata",
+      "actual": "前連結会計年度 (2025-03-31)",
+      "reason": "Date format ISO normalization in column header"
+    }
+  ]
+  ```
+- **Matching Rule**: A waiver applies if and only if `id`, `type`, AND `actual` all match the ledger entry.
+- **Reason Mandate**: Any waiver entry with an empty or whitespace `reason` triggers harness error (exit code 2).
+- **Exit Codes**:
+  - `0`: All discrepancies are waived, or the ledger is completely empty.
+  - `1`: One or more unwaived discrepancies exist.
+  - `2`: Harness error (unreadable/invalid schema, invalid waiver file, or deprecated `--fail-under-*` flags).
 
 ---
 
@@ -292,22 +318,23 @@ Every claim from `README.md` and `eval/README.md` is inventoried below and class
 2. **Designed for, not measured**: Architectural features implemented in code but not triggered on this single-page asset filing.
 3. **Out of scope**: Explicitly excluded capabilities.
 
-| Capability Claim | Source Citation | Classification | Grounded Evidence / Status |
+| Capability Claim | Source Citation | Classification | Grounded Evidence / Concrete Status |
 | :--- | :--- | :---: | :--- |
-| **Row Count (43 rows)** | `README.md:130` | **Measured on this page** | `eval/gold.json:28-348`; `verify_hierarchy.py` confirms 43 rows. |
+| **Row Count (43 rows)** | `README.md:130` | **Measured on this page** | `eval/gold.json:28-348`; `verify_hierarchy.py` confirms 43 rows match. |
 | **Column Count (2 columns)** | `README.md:131` | **Measured on this page** | `eval/gold.json:14-17` (`前連結会計年度`, `当連結会計年度`). |
 | **Indent Levels (5 levels)** | `README.md:132` | **Measured on this page** | Discovered centroids: 62.3, 75.2, 88.2, 101.3, 114.2 pt (`reports/A_parser_audit.md:151`). |
 | **Token Coverage (74/74 tokens)** | `README.md:133` | **Measured on this page** | `eval/gold.json` contains 74 value tokens; `evaluate.py` confirms 100% token coverage. |
-| **Zero Independent Discrepancies** | `README.md:134` | **Measured on this page** | `evaluate.py --gold eval/gold.json --input output/balance_sheet_p1.json` reports 0 discrepancies. |
-| **Accounting Checks (20/20 PASS)** | `README.md:135` | **Measured on this page** | `evaluate.py` lines 624-627 outputs: 20 checks (7 exact, 13 rounding, 0 failed). |
-| **Sequence Alignment Matching** | `eval/README.md:127` | **Measured on this page** | Evaluator Needleman-Wunsch aligns 43/43 rows (100% precision/recall). |
-| **Nil Only Matches Nil** | `eval/README.md:112` | **Measured on this page** | `test_fault_injections.py:145-166` verifies `"－"` vs `"0"` fails exact and numeric match. |
-| **Negative Zero Preservation** | `eval/README.md:115` | **Measured on this page** | `gold.json:19-27` uncertain cell 12; `test_fault_injections.py:124-143` confirms `"△0"` $\ne$ `"0"`. |
+| **Discrepancy Ledger Architecture** | `eval/README.md:6-12` | **Measured on this page** | `evaluate.py` outputs enumerated ledger; verified across 18 automated tests. |
+| **Accounting Checks (20/20 PASS)** | `README.md:135` | **Measured on this page** | `evaluate.py` diagnostics: 20 checks (7 exact, 13 rounding, 0 failed). |
+| **Sequence Alignment Matching** | `eval/README.md:127` | **Measured on this page** | Needleman-Wunsch aligns 43/43 rows (100% precision/recall). |
+| **Nil Only Matches Nil** | `eval/README.md:112` | **Measured on this page** | `test_fault_injections.py:171-180` verifies `"－"` vs `"0"` triggers `nil_zero`. |
+| **Negative Zero Preservation** | `eval/README.md:115` | **Measured on this page** | `gold.json:19-27` uncertain cell 12; `test_fault_injections.py:157-167` triggers `sign_error`. |
 | **Dynamic Hierarchy Subtotals** | `README.md:191` | **Measured on this page** | Commit `a372a13` dynamic subordinate discovery replaces hardcoded subtotal keywords. |
+| **Dual-Engine Token Cross-Check**| `README.md:30` | **Measured on this page** | `parser/coverage_auditor.py:69` verifies 74 tokens against `pdftotext -layout`. |
 | **Detached Marker Proximity Merge** | `README.md:41` | Designed for, not measured | Handled in `pdf_extractor.py:82`; not triggered on `balance_sheet.pdf` (markers pre-attached). |
 | **Flat-Indent Fallback** | `README.md:16` | Designed for, not measured | `hierarchy_builder.py:18-36`; dormant on `balance_sheet.pdf` (`reports/A_parser_audit.md:150`). |
 | **Liabilities & Equity Sections** | `README.md:177` | Designed for, not measured | Pipeline supports `負債の部`/`純資産の部`; omitted from 1-page sample (assets side only). |
-| **3-Column Comparison Stress** | `README.md:55` | Designed for, not measured | Verified by synthetic test fixture `stress_3col.pdf`; not measured on `balance_sheet.pdf`. |
+| **3-Column Comparison Stress** | `README.md:55` | Designed for, not measured | Verified by synthetic test fixture `tests/fixtures/stress_3col.pdf`. |
 | **Scanned / Rasterized Documents (OCR)**| `README.md:180` | **Out of scope** | Vector PDF required; no OCR engine included. |
 | **Multi-Page Spanning Tables** | `README.md:175` | **Out of scope** | Single-page table scope; cross-page continuation requires per-page processing. |
 | **Network / External APIs** | Ground Rule 4 | **Out of scope** | 100% local execution strictly enforced. |
@@ -321,11 +348,11 @@ Every claim from `README.md` and `eval/README.md` is inventoried below and class
 | **1** | **Subtotal Row Parenting** | A: Section header closed<br>B: Document root<br>C: Preceding leaf item | **Option A** | Matches human visual and accounting reading order. Adopted across `gold.json`, `hierarchy_tree.txt`, `SPEC.md`, and parser. |
 | **2** | **Contra & Net Placement** | A: Both parented to gross row<br>B: Parented to division header<br>C: Net parented to contra | **Option A** | Both sit at identical visual indentation (level 4, 114.2 pt) under the gross line item (level 3, 101.3 pt). |
 | **3** | **Tangible Subtotal Roll-Up** | A: Sum 4 net lines + land + CIP ($n=6$)<br>B: Sum 10 gross & contra lines | **Option A** | Net rows replace gross and contra rows on the face of the balance sheet. Prevents double-counting. |
-| **4** | **Tolerance Model** | A: Symmetric $\pm \lceil n/2 \rceil$<br>B: Strict directional truncation<br>C: Dual-mode diagnostic warning | **DECISION NEEDED**<br>(*Option C Recommended*) | Retains generalizability across filings while warning on impossible negative drift on truncated source documents. |
+| **4** | **Tolerance Model** | A: Symmetric $\pm \lceil n/2 \rceil$<br>B: Strict directional truncation<br>C: Dual-mode diagnostic warning | **Option C** | Retains generalizability across filings while warning on impossible negative drift on truncated source documents. |
 | **5** | **Contra Signs in `gold.json`** | A: Keep `"sign": 1` (use signed float)<br>B: Change to `"sign": -1` | **Option A** | Preserves protected file `gold.json` while maintaining mathematical correctness since contra values parse to negative floats. |
-| **6** | **Accounting Check Gating** | A: Informational diagnostic<br>B: Hard CI pass/fail gate | **DECISION NEEDED**<br>(*Option A Recommended*) | Avoids penalizing faithful parsers when source filing documents contain intrinsic publisher rounding errors. |
-| **7** | **Discrepancy Ledger Model** | A: Percentage rates threshold<br>B: Closed discrepancy ledger with strict exit & waivers | **DECISION NEEDED**<br>(*Option B Recommended*) | Makes discrepancies the first-class output; rates become secondary summary metrics. |
-| **8** | **Scale Invariance (`y_band_tol`)**| A: Scale with glyph width<br>B: Keep fixed 2.0 pt | **DECISION NEEDED**<br>(*Option A Recommended*) | Prevents catastrophic row collapse when PDF coordinate space is scaled down ($0.5\times$). |
+| **6** | **Accounting Check Gating** | A: Informational diagnostic (non-gating)<br>B: Hard CI pass/fail gate | **Option A** | Prevents penalizing faithful parsers when source filing documents contain intrinsic publisher rounding errors. |
+| **7** | **Discrepancy Ledger Model** | A: Percentage rates threshold<br>B: Closed discrepancy ledger with strict exit & waivers | **Option B** | Implemented in Chat C; makes discrepancies the first-class output; rates become secondary summary metrics. |
+| **8** | **Scale Invariance (`y_band_tol`)**| A: Scale with glyph width<br>B: Keep fixed 2.0 pt | **Option A (Recommended)** | Prevents catastrophic row collapse when PDF coordinate space is scaled down ($0.5\times$). |
 | **9** | **Nil Character Matching** | A: Strict character identity<br>B: Unicode class equivalency | **Hybrid (As Implemented)** | Exact string match requires verbatim character; normalized numeric match accepts all valid Unicode dashes. |
 | **10**| **Negative Zero Representation** | A: Preserve `"△0"`<br>B: Coerce to `"0"` | **Option A** | Preserves auditability and negative provision semantics while parsing to $-0.0$ in numeric summation. |
 
