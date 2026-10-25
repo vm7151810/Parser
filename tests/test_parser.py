@@ -57,7 +57,7 @@ class TestValueParser:
 
 class TestLiveSample:
     def test_balance_sheet_sample(self):
-        pdf_path = Path("/home/mivikev/Desktop/Dev/UrAI/balance_sheet.pdf")
+        pdf_path = Path(__file__).resolve().parent.parent / "balance_sheet.pdf"
         assert pdf_path.exists()
 
         table = parse_pdf_page(str(pdf_path), page_number=1)

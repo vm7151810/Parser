@@ -13,7 +13,7 @@ To ensure zero-leakage, strict separation of concerns, and mathematical rigor, t
 |                                    PHASE 1: CREATION                                            |
 +-------------------------------------------------------------------------------------------------+
 |  [Session 1: Ground Truth & Eval]                   [Session 2: Inductive Parser]               |
-|  - 2-pass human visual transcription                - 12-stage inductive pipeline               |
+|  - 2-pass AI-assisted transcription                 - 12-stage inductive pipeline               |
 |  - Minimal parser-agnostic schema                   - Glyph-relative clustering                 |
 |  - Baseline evaluation harness                      - Accounting checks engine                  |
 +-------------------------------------------------------------------------------------------------+
@@ -35,7 +35,7 @@ To ensure zero-leakage, strict separation of concerns, and mathematical rigor, t
 
 | # | File | Session ID | Core Scope & Deliverables |
 |---|---|---|---|
-| **01** | [`01_creation_eval_ground_truth.md`](01_creation_eval_ground_truth.md) | `23451162` | **Ground Truth & Baseline Eval**: Transcribed `eval/gold.json` visually from 200 DPI image; authored `transcription_log.md` and initial evaluation harness. |
+| **01** | [`01_creation_eval_ground_truth.md`](01_creation_eval_ground_truth.md) | `23451162` | **Ground Truth & Baseline Eval**: Transcribed `eval/gold.json` with AI assistance from 200 DPI image; authored `transcription_log.md` and initial evaluation harness. |
 | **02** | [`02_creation_parser_pipeline.md`](02_creation_parser_pipeline.md) | `761b43c2` | **Parser Engineering**: Built the 12-stage inductive pipeline (`parser/`), column detection, indent clustering, triplet pairing, and CLI (`main.py`). |
 | **03** | [`03_audit_chat_a_parser_agnosticism.md`](03_audit_chat_a_parser_agnosticism.md) | `4462182d` | **Audit A (Agnosticism)**: Eliminated hardcoded page assumptions; ran ablations and in-memory coordinate invariance tests; generalized dynamic subtotal addends. |
 | **04** | [`04_audit_chat_b_accounting_verification.md`](04_audit_chat_b_accounting_verification.md) | `d62f7b15` | **Audit B (Accounting)**: Reconciled all 10 accounting checks independently; investigated directional truncation vs symmetric rounding; proved non-gating diagnostic rule. |

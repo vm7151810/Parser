@@ -1,6 +1,14 @@
-# Japanese Financial Statement PDF Parser (連結財務諸表パーサー)
+# Japanese Financial Statement PDF Parser
 
-A local, auditable, and production-grade Python parser that converts Japanese public company filing pages (such as EDINET/TDnet balance sheets / 連結貸借対照表) into structured JSON and GitHub Flavored Markdown tables.
+> **TL;DR**:
+> 
+> - **What it does**: Parses Japanese balance sheet PDFs into structured JSON and GFM Markdown using dynamic layout induction rather than hardcoded geometries.
+> - **Headline result**: 43/43 rows, 74/74 value tokens, and 20/20 accounting checks pass (7 exact, 13 within rounding tolerance).
+> - **How "correct" is defined**: Evaluated against a formal normative specification with a closed discrepancy ledger ([eval/SPEC.md](eval/SPEC.md)).
+> - **What is not tested**: Tested on a single-page vector balance sheet assets side; multi-page tables, liabilities/equity, and scanned OCR are not tested.
+> - **Where to start reading**: Start with [eval/SPEC.md](eval/SPEC.md) for the evaluation methodology, or run `python3 main.py balance_sheet.pdf` to see parser output.
+
+A local, auditable, and production-grade Python parser that converts Japanese public company filing pages into structured JSON and GitHub Flavored Markdown tables.
 
 ---
 
@@ -81,10 +89,12 @@ UrAI/
 ## Installation & Setup
 
 Requirements:
+
 - Python 3.10+
 - `poppler-utils` (for `pdftotext` audit; standard on Linux: `sudo apt install poppler-utils`)
 
 Install Python dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -96,11 +106,13 @@ pip install -r requirements.txt
 ### Run Parser CLI
 
 Parse a PDF page and produce both structured JSON and Markdown outputs:
+
 ```bash
 python3 main.py balance_sheet.pdf --page 1 --out output/
 ```
 
 Options:
+
 - `pdf_path`: Path to input PDF file.
 - `--page N`: Page number to parse (1-indexed, default: `1`).
 - `--out DIR`: Output directory (default: `output/`).
@@ -109,24 +121,26 @@ Options:
 ### Run Evaluation Script
 
 Evaluate the parser's output against a gold reference table:
+
 ```bash
 python3 eval/evaluate.py --gold eval/gold.json --input output/balance_sheet_p1.json
 ```
 
 Output metrics reported:
+
 - **Discrepancy Ledger**: Enumerated list of discrepancies (missing rows, wrong values, sign errors, nil mismatches, hierarchy errors, metadata mismatches) with severity levels.
 - **Row F1**: Precision/Recall/F1 on extracted row sequence alignment.
 - **Hierarchy Accuracy**: Parent label and parent index match rate on aligned rows.
 - **Cell Exact Accuracy**: Verbatim printed string match on value cells (74 cells).
 - **Cell Numeric Accuracy**: Signed float match on value cells.
 - **Token F1**: Multiset match of all printed digit sequences against gold.
-- **Accounting Consistency** (non-gating diagnostic): Subtotals and net values checked with scaled rounding tolerance $\max(1, \lceil n/2 
-ceil)$.
+- **Accounting Consistency** (non-gating diagnostic): Subtotals and net values checked with scaled rounding tolerance $\max(1, \lceil n/2 \rceil)$.
 - **Exit codes**: 0 = no unwaived discrepancies, 1 = discrepancies exist, 2 = harness error.
 
 ### Run Automated Tests
 
 Run pytest across all unit tests and live sample validation:
+
 ```bash
 python3 -m pytest tests/ -v
 ```
@@ -135,30 +149,16 @@ python3 -m pytest tests/ -v
 
 ## Results on `balance_sheet.pdf`
 
-| Metric | Result | Notes |
-|---|---|---|
-| **Rows Extracted** | 43 | Full assets side (資産の部) |
-| **Columns Detected** | 2 | 前連結会計年度, 当連結会計年度 |
-| **Indent Levels** | 5 | Automatically discovered without presets |
-| **Token Coverage** | 100.0% | 74 / 74 financial tokens accounted for |
-| **Independent Discrepancies** | 0 | 0 unassigned, 0 phantom |
-| **Accounting Checks** | 20 / 20 PASS | 7 exact, 13 within source-rounding tolerance |
+| Metric                        | Result       | Notes                                        |
+| ----------------------------- | ------------ | -------------------------------------------- |
+| **Rows Extracted**            | 43           | Full assets side (資産の部)                      |
+| **Columns Detected**          | 2            | 前連結会計年度, 当連結会計年度                             |
+| **Indent Levels**             | 5            | Automatically discovered without presets     |
+| **Token Coverage**            | 100.0%       | 74 / 74 financial tokens accounted for       |
+| **Independent Discrepancies** | 0            | 0 unassigned, 0 phantom                      |
+| **Accounting Checks**         | 20 / 20 PASS | 7 exact, 13 within source-rounding tolerance |
 
-### Accounting Breakdown:
-- **Net-Value Checks (8/8 PASS)**:
-  - 建物及び構築物 (前期: exact, 当期: diff 1, tol ±1)
-  - 機械装置及び運搬具 (前期: exact, 当期: exact)
-  - リース資産 (前期: diff 1, tol ±1, 当期: diff 1, tol ±1)
-  - その他 (前期: exact, 当期: exact)
-- **Subsection Subtotals (8/8 PASS)**:
-  - 流動資産合計 (10 terms, tol ±5, 前期 diff 3, 当期 diff 2)
-  - 有形固定資産合計 (6 terms, tol ±3, 前期 diff 1, 当期 diff 3)
-  - 無形固定資産合計 (2 terms, tol ±1, 前期 diff 1, 当期 diff 1)
-  - 投資その他の資産合計 (5 terms, tol ±3, 前期 diff 1, 当期 diff 1)
-- **Composite Section Totals (2/2 PASS)**:
-  - 固定資産合計 (3 subsections, tol ±2, 前期 diff 2, 当期 diff 0)
-- **Grand Total (2/2 PASS)**:
-  - 資産合計 (2 sections, tol ±1, 前期 diff 0, 当期 diff 1)
+**Accounting Breakdown**: 20/20 PASS (7 exact, 13 within tolerance). Full arithmetic is documented in [`eval/transcription_log.md`](eval/transcription_log.md) §4.
 
 ---
 
