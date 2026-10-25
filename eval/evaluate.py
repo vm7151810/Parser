@@ -2,17 +2,24 @@
 """
 Evaluation Harness for Japanese Financial Table Parsers.
 
-Evaluates parser output JSON against gold reference JSON.
-Metrics:
-  1. Row Match (Sequence Alignment preserving page order)
-  2. Hierarchy Accuracy (Parent match on visual indentation / subtotal closing)
-  3. Cell Accuracy (Separately reported for Value cells [74] and No-Value cells [12])
-  4. Numeric-Token Coverage (Multiset Counter match)
-Diagnostics:
-  - Accounting Consistency Checks (with scaled rounding tolerance; NOT accuracy)
+Evaluates parser output JSON against gold reference JSON using an enumerated
+discrepancy ledger as the primary output.
+
+Closed Taxonomy of Discrepancies:
+  CRITICAL:
+    - missing_row: A gold row is completely absent from parser output
+    - extra_row: A parser row has no counterpart in gold
+    - wrong_metadata: Mismatch in unit, column headers, or column count
+  ERROR:
+    - wrong_label: Row paired by identical values but has wrong label
+    - wrong_printed_value: Cell printed string or parsed numeric mismatch
+    - sign_error: Same magnitude, different sign marker or direction (incl. △0 vs 0)
+    - nil_zero: Explicit nil dash (－) converted to zero (0), or vice versa
+    - nil_missing: Explicit nil dash omitted as null/empty, or vice versa
+    - wrong_parent: Hierarchy visual parent mismatch resolved through alignment
 
 Usage:
-  python3 eval/evaluate.py --gold eval/gold.json --input output.json
+  python3 eval/evaluate.py --gold eval/gold.json --input output.json [--waivers waivers.json] [--format text|json|markdown]
 """
 
 from __future__ import annotations
@@ -23,7 +30,7 @@ import re
 import sys
 import unicodedata
 from collections import Counter
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Set
 
 
 def normalize_label(text: Optional[str]) -> str:
@@ -31,7 +38,6 @@ def normalize_label(text: Optional[str]) -> str:
     if not text:
         return ""
     norm = unicodedata.normalize("NFKC", text)
-    # Remove all whitespace, line breaks, full-width spaces
     norm = re.sub(r"[\s\u3000\n\r\t]+", "", norm)
     return norm
 
@@ -108,6 +114,9 @@ def extract_numeric_tokens(text: Any) -> List[str]:
 def sequence_align(gold_labels: List[str], parser_labels: List[str]) -> List[Tuple[Optional[int], Optional[int]]]:
     """
     Global sequence alignment (Needleman-Wunsch) strictly preserving page order.
+    Deterministic tie-breaking:
+      - When parser has adjacent duplicate rows, earlier occurrence matches gold; later is extra (prefer left on tie with diag).
+      - When gold has adjacent duplicate rows, earlier occurrence matches parser; later is missing (prefer up on tie with diag).
     Returns list of aligned (gold_index, parser_index) pairs (0-indexed).
     """
     m = len(gold_labels)
@@ -152,12 +161,13 @@ def sequence_align(gold_labels: List[str], parser_labels: List[str]) -> List[Tup
             best = max(score_diag, score_up, score_left)
             dp[i][j] = best
 
-            if best == score_diag:
-                backtrack[i][j] = 0
+            # Deterministic tie-breaking: prefer left over diag, up over diag
+            if best == score_left:
+                backtrack[i][j] = 2
             elif best == score_up:
                 backtrack[i][j] = 1
             else:
-                backtrack[i][j] = 2
+                backtrack[i][j] = 0
 
     # Backtrace
     i, j = m, n
@@ -178,10 +188,121 @@ def sequence_align(gold_labels: List[str], parser_labels: List[str]) -> List[Tup
     return alignment
 
 
-def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
+def classify_cell_discrepancy(
+    g_cell: Any,
+    p_cell: Any,
+    p_has_col: bool
+) -> Optional[Tuple[str, str, Any, Any, dict]]:
+    """
+    Total classification function for cell kinds:
+      Gold: {null, nil, unsigned number, negative number incl. △0}
+      Parser: {same + missing}
+
+    Returns:
+      None if matched, or (type, severity, expected, actual, detail)
+    """
+    if not p_has_col:
+        # Cell column omitted from parser row
+        if g_cell is None:
+            return ("wrong_printed_value", "ERROR", None, None, {"numeric_match": False, "reason": "missing_column"})
+        g_num, g_nil, g_neg, g_null = parse_numeric_cell(g_cell)
+        if g_nil:
+            return ("nil_missing", "ERROR", g_cell, None, {"numeric_match": False})
+        return ("wrong_printed_value", "ERROR", g_cell, None, {"numeric_match": False})
+
+    # Exact string match (handles both None or identical strings)
+    if str(g_cell) == str(p_cell):
+        return None
+
+    g_num, g_nil, g_neg, g_null = parse_numeric_cell(g_cell)
+    p_num, p_nil, p_neg, p_null = parse_numeric_cell(p_cell)
+
+    # 1. Gold is null (category header cell)
+    if g_null:
+        if p_null:
+            return None
+        if p_nil:
+            # gold null + parser nil = nil_missing
+            return ("nil_missing", "ERROR", None, p_cell, {"numeric_match": False})
+        # gold null + parser value = wrong_printed_value
+        return ("wrong_printed_value", "ERROR", None, p_cell, {"numeric_match": False})
+
+    # 2. Gold is nil (e.g. "－")
+    if g_nil:
+        if p_null:
+            # gold nil + parser null = nil_missing
+            return ("nil_missing", "ERROR", g_cell, None, {"numeric_match": False})
+        if p_nil:
+            # Different glyph (e.g. "－" vs "-") -> wrong_printed_value with detail numeric_match=true
+            return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": True})
+        if p_num is not None:
+            if abs(p_num) < 1e-4:
+                # gold nil + parser zero (0 or △0) = nil_zero
+                return ("nil_zero", "ERROR", g_cell, p_cell, {"numeric_match": False})
+            return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": False})
+        return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": False})
+
+    # 3. Gold is numeric (unsigned or negative)
+    if g_num is not None:
+        if p_null:
+            return ("wrong_printed_value", "ERROR", g_cell, None, {"numeric_match": False})
+        if p_nil:
+            if abs(g_num) < 1e-4:
+                return ("nil_zero", "ERROR", g_cell, p_cell, {"numeric_match": False})
+            return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": False})
+        if p_num is not None:
+            same_magnitude = (abs(abs(g_num) - abs(p_num)) < 1e-4)
+            if same_magnitude:
+                if g_neg != p_neg:
+                    # Same magnitude, different sign marker (incl. △0 vs 0) = sign_error
+                    return ("sign_error", "ERROR", g_cell, p_cell, {"numeric_match": abs(g_num - p_num) < 1e-4})
+                # Same magnitude, same sign, but string differs
+                return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": True})
+            # Different magnitude
+            return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": False})
+
+    # Fallback
+    return ("wrong_printed_value", "ERROR", g_cell, p_cell, {"numeric_match": False})
+
+
+def entry_sort_key(entry: dict) -> tuple:
+    """Sort ledger entries: CRITICAL first, then ERROR; then by gold row / parser row / metadata, then col."""
+    sev_order = {"CRITICAL": 0, "ERROR": 1}.get(entry.get("severity", ""), 9)
+    eid = entry.get("id", "")
+    if eid.startswith("META:"):
+        return (sev_order, 0, eid)
+    if eid.startswith("EXTRA:P"):
+        try:
+            p_idx = int(eid.split("P")[1])
+        except Exception:
+            p_idx = 9999
+        return (sev_order, 2, p_idx)
+    m = re.match(r"R(\d+)(?::(.+))?", eid)
+    if m:
+        r_idx = int(m.group(1))
+        col_str = m.group(2) or ""
+        col_m = re.match(r"C(\d+)", col_str)
+        col_val = int(col_m.group(1)) if col_m else 0
+        return (sev_order, 1, r_idx, col_val, col_str)
+    return (sev_order, 3, eid)
+
+
+def evaluate_table(
+    gold_data: dict,
+    parser_data: dict,
+    waivers: Optional[List[dict]] = None
+) -> dict:
     """
     Core evaluation logic comparing parser data against gold reference.
+    Returns structured report dictionary containing discrepancy ledger, rates, and diagnostics.
     """
+    if waivers is None:
+        waivers = []
+
+    # Validate parser input basic schema
+    if "rows" not in parser_data or not isinstance(parser_data["rows"], list):
+        raise ValueError("Parser data missing 'rows' array.")
+
     gold_rows = gold_data.get("rows", [])
     parser_rows = parser_data.get("rows", [])
 
@@ -191,44 +312,220 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
     gold_labels = [r.get("label", "") for r in gold_rows]
     parser_labels = [r.get("label", "") for r in parser_rows]
 
-    # 1. Row Sequence Alignment
-    alignment = sequence_align(gold_labels, parser_labels)
+    ledger: List[dict] = []
 
+    # =================================================================
+    # 1. Metadata Verification (wrong_metadata, CRITICAL)
+    # =================================================================
+    gold_meta = gold_data.get("metadata") or gold_data.get("meta") or {}
+    parser_meta = parser_data.get("metadata") or parser_data.get("meta") or {}
+    if not parser_meta and "unit" in parser_data:
+        parser_meta = parser_data
+
+    # 1a. Unit
+    gold_unit = gold_meta.get("unit")
+    parser_unit = parser_meta.get("unit") if parser_meta else parser_data.get("unit")
+    if gold_unit is not None:
+        if normalize_label(gold_unit) != normalize_label(parser_unit):
+            ledger.append({
+                "id": "META:unit",
+                "type": "wrong_metadata",
+                "severity": "CRITICAL",
+                "expected": gold_unit,
+                "actual": parser_unit,
+                "detail": {},
+                "waived": False,
+                "waiver_reason": None
+            })
+
+    # 1b. Column Headers & Column Count
+    gold_headers = gold_meta.get("column_headers", [])
+    parser_headers = parser_meta.get("column_headers", [])
+    if not parser_headers and "column_headers" in parser_data:
+        parser_headers = parser_data["column_headers"]
+
+    num_gold_cols = len(gold_headers)
+    num_parser_cols = len(parser_headers)
+    common_cols = min(num_gold_cols, num_parser_cols) if (num_gold_cols > 0 and num_parser_cols > 0) else max(num_gold_cols, num_parser_cols)
+
+    if num_gold_cols > 0 and num_parser_cols > 0 and num_gold_cols != num_parser_cols:
+        ignored = list(range(common_cols + 1, max(num_gold_cols, num_parser_cols) + 1))
+        ledger.append({
+            "id": "META:columns",
+            "type": "wrong_metadata",
+            "severity": "CRITICAL",
+            "expected": num_gold_cols,
+            "actual": num_parser_cols,
+            "detail": {
+                "gold_columns": gold_headers,
+                "parser_columns": parser_headers,
+                "ignored_columns": ignored
+            },
+            "waived": False,
+            "waiver_reason": None
+        })
+
+    # Header texts for common columns
+    for c_i in range(min(num_gold_cols, num_parser_cols)):
+        g_h = gold_headers[c_i]
+        p_h = parser_headers[c_i]
+        if normalize_label(g_h) != normalize_label(p_h):
+            ledger.append({
+                "id": f"META:col{c_i + 1}",
+                "type": "wrong_metadata",
+                "severity": "CRITICAL",
+                "expected": g_h,
+                "actual": p_h,
+                "detail": {},
+                "waived": False,
+                "waiver_reason": None
+            })
+
+    # =================================================================
+    # 2. Sequence Alignment & Gap Pairing (wrong_label)
+    # =================================================================
+    raw_alignment = sequence_align(gold_labels, parser_labels)
+
+    # Decompose alignment into anchors and gaps
     matched_pairs: List[Tuple[int, int]] = []
-    unmatched_gold_indices: List[int] = []
-    unmatched_parser_indices: List[int] = []
-
     gold_to_parser_map: Dict[int, int] = {}
     parser_to_gold_map: Dict[int, int] = {}
 
-    for g_idx, p_idx in alignment:
+    # Identify anchored matches where label matches
+    is_anchor: List[bool] = []
+    for g_idx, p_idx in raw_alignment:
         if g_idx is not None and p_idx is not None:
             g_lbl = normalize_label(gold_labels[g_idx])
             p_lbl = normalize_label(parser_labels[p_idx])
             if g_lbl == p_lbl and g_lbl != "":
-                matched_pairs.append((g_idx, p_idx))
-                gold_to_parser_map[g_idx] = p_idx
-                parser_to_gold_map[p_idx] = g_idx
+                is_anchor.append(True)
+                continue
+        is_anchor.append(False)
+
+    # Process gaps between anchors
+    gap_g_indices: List[int] = []
+    gap_p_indices: List[int] = []
+
+    unmatched_gold_indices: List[int] = []
+    unmatched_parser_indices: List[int] = []
+
+    def flush_gap(gaps_g: List[int], gaps_p: List[int]):
+        """Pair unmatched rows in gap ONLY if identical non-empty value tuples."""
+        paired_p: Set[int] = set()
+        for g_i in gaps_g:
+            g_row = gold_rows[g_i]
+            g_vals = g_row.get("values", [])
+            # Must be non-empty (at least one non-null value)
+            has_val = any(v is not None for v in g_vals)
+
+            found_p = None
+            if has_val:
+                for p_i in gaps_p:
+                    if p_i in paired_p:
+                        continue
+                    p_row = parser_rows[p_i]
+                    p_vals = p_row.get("values", [])
+                    if tuple(g_vals) == tuple(p_vals):
+                        found_p = p_i
+                        break
+
+            if found_p is not None:
+                paired_p.add(found_p)
+                matched_pairs.append((g_i, found_p))
+                gold_to_parser_map[g_i] = found_p
+                parser_to_gold_map[found_p] = g_i
+                ledger.append({
+                    "id": f"R{g_i + 1}:label",
+                    "type": "wrong_label",
+                    "severity": "ERROR",
+                    "expected": g_row.get("label"),
+                    "actual": parser_rows[found_p].get("label"),
+                    "detail": {
+                        "gold_row_index": g_i + 1,
+                        "parser_row_index": found_p + 1,
+                        "values": g_vals
+                    },
+                    "waived": False,
+                    "waiver_reason": None
+                })
             else:
-                unmatched_gold_indices.append(g_idx)
-                unmatched_parser_indices.append(p_idx)
-        elif g_idx is not None:
-            unmatched_gold_indices.append(g_idx)
-        elif p_idx is not None:
-            unmatched_parser_indices.append(p_idx)
+                unmatched_gold_indices.append(g_i)
 
-    num_gold = len(gold_rows)
-    num_parser = len(parser_rows)
-    num_matched = len(matched_pairs)
+        for p_i in gaps_p:
+            if p_i not in paired_p:
+                unmatched_parser_indices.append(p_i)
 
-    row_recall = num_matched / num_gold if num_gold > 0 else 1.0
-    row_precision = num_matched / num_parser if num_parser > 0 else 1.0
-    row_f1 = (2 * row_precision * row_recall / (row_precision + row_recall)) if (row_precision + row_recall) > 0 else 0.0
+    for idx, (g_idx, p_idx) in enumerate(raw_alignment):
+        if is_anchor[idx]:
+            flush_gap(gap_g_indices, gap_p_indices)
+            gap_g_indices = []
+            gap_p_indices = []
+            matched_pairs.append((g_idx, p_idx))
+            gold_to_parser_map[g_idx] = p_idx
+            parser_to_gold_map[p_idx] = g_idx
+        else:
+            if g_idx is not None:
+                gap_g_indices.append(g_idx)
+            if p_idx is not None:
+                gap_p_indices.append(p_idx)
+    flush_gap(gap_g_indices, gap_p_indices)
 
-    # 2. Hierarchy Accuracy (enforce 1-indexed parent_index)
+    # Missing Gold Rows (missing_row, CRITICAL)
+    missing_gold_row_indices_set = set(unmatched_gold_indices)
+    for g_idx in unmatched_gold_indices:
+        g_row = gold_rows[g_idx]
+        g_row_num = g_row.get("row_index", g_idx + 1)
+        subsumed_cells = len(g_row.get("values", []))
+        orphaned = [
+            child.get("row_index", c_i + 1)
+            for c_i, child in enumerate(gold_rows)
+            if child.get("parent_index") == g_row_num
+        ]
+        ledger.append({
+            "id": f"R{g_row_num}:row",
+            "type": "missing_row",
+            "severity": "CRITICAL",
+            "expected": {
+                "row_index": g_row_num,
+                "label": g_row.get("label")
+            },
+            "actual": None,
+            "detail": {
+                "subsumed_cells": subsumed_cells,
+                "orphaned_children": orphaned
+            },
+            "waived": False,
+            "waiver_reason": None
+        })
+
+    # Extra Parser Rows (extra_row, CRITICAL)
+    for p_idx in unmatched_parser_indices:
+        p_row = parser_rows[p_idx]
+        ledger.append({
+            "id": f"EXTRA:P{p_idx + 1}",
+            "type": "extra_row",
+            "severity": "CRITICAL",
+            "expected": None,
+            "actual": {
+                "parser_row_index": p_idx + 1,
+                "label": p_row.get("label")
+            },
+            "detail": {},
+            "waived": False,
+            "waiver_reason": None
+        })
+
+    # =================================================================
+    # 3. Hierarchy Verification (wrong_parent, ERROR)
+    # =================================================================
     correct_hierarchy = 0
     total_hierarchy_candidates = 0
-    hierarchy_details: List[dict] = []
+
+    has_explicit_row_index = any("row_index" in r for r in parser_rows)
+    p_row_idx_map = (
+        {r["row_index"]: i for i, r in enumerate(parser_rows) if "row_index" in r}
+        if has_explicit_row_index else {}
+    )
 
     if score_hierarchy:
         for g_idx, p_idx in matched_pairs:
@@ -236,153 +533,137 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
             p_row = parser_rows[p_idx]
 
             g_parent_lbl = normalize_label(g_row.get("parent_label"))
+            g_parent_idx = g_row.get("parent_index")  # 1-indexed
+
+            # If gold row has no parent (root row)
+            if not g_parent_lbl and g_parent_idx is None:
+                continue
+
+            total_hierarchy_candidates += 1
+
+            # Check if gold parent was an unaligned / missing row
+            # If gold parent is missing, child produces NO wrong_parent (it is orphaned child)
+            if g_parent_idx is not None and (g_parent_idx - 1) in missing_gold_row_indices_set:
+                correct_hierarchy += 1
+                continue
+
+            # Resolve parser's parent_index to gold row through alignment
+            p_parent_idx = p_row.get("parent_index")  # 1-indexed
             p_parent_lbl = normalize_label(p_row.get("parent_label"))
 
-            if g_parent_lbl:
-                total_hierarchy_candidates += 1
-                parent_match = False
-
-                # Check label match
-                if g_parent_lbl == p_parent_lbl:
-                    # Enforce strict 1-indexed parent_index if provided
-                    p_parent_idx = p_row.get("parent_index")
-                    g_parent_idx = g_row.get("parent_index")
-
-                    if p_parent_idx is not None and g_parent_idx is not None:
-                        # Gold parent_index is 1-indexed -> 0-indexed is g_parent_idx - 1
-                        expected_parser_idx = gold_to_parser_map.get(g_parent_idx - 1)
-                        # Parser parent_index is 1-indexed -> 0-indexed is p_parent_idx - 1
-                        p_parent_idx_zero = p_parent_idx - 1
-                        if p_parent_idx_zero == expected_parser_idx:
-                            parent_match = True
-                        else:
-                            parent_match = False
-                    else:
-                        parent_match = True
-
-                if parent_match:
-                    correct_hierarchy += 1
+            if p_parent_idx is not None:
+                if has_explicit_row_index and p_parent_idx in p_row_idx_map:
+                    p_parent_zero = p_row_idx_map[p_parent_idx]
                 else:
-                    hierarchy_details.append({
-                        "row_index": g_row.get("row_index", g_idx + 1),
-                        "label": g_row.get("label"),
-                        "expected_parent": g_row.get("parent_label"),
-                        "expected_parent_index": g_row.get("parent_index"),
-                        "parser_parent": p_row.get("parent_label"),
-                        "parser_parent_index": p_row.get("parent_index"),
-                    })
+                    p_parent_zero = p_parent_idx - 1 if (1 <= p_parent_idx <= len(parser_rows)) else None
+
+                if p_parent_zero is not None:
+                    resolved_gold_parent_zero = parser_to_gold_map.get(p_parent_zero)
+                    actual_gold_parent_idx = (resolved_gold_parent_zero + 1) if resolved_gold_parent_zero is not None else None
+                else:
+                    actual_gold_parent_idx = None
+            else:
+                actual_gold_parent_idx = None
+
+            parent_match = (
+                (g_parent_lbl == p_parent_lbl) and
+                (actual_gold_parent_idx == g_parent_idx)
+            )
+
+            if parent_match:
+                correct_hierarchy += 1
+            else:
+                g_row_num = g_row.get("row_index", g_idx + 1)
+                ledger.append({
+                    "id": f"R{g_row_num}:parent",
+                    "type": "wrong_parent",
+                    "severity": "ERROR",
+                    "expected": {
+                        "parent_index": g_parent_idx,
+                        "parent_label": g_row.get("parent_label")
+                    },
+                    "actual": {
+                        "parent_index": actual_gold_parent_idx,
+                        "parent_label": p_row.get("parent_label")
+                    },
+                    "detail": {
+                        "parser_parent_index": p_parent_idx
+                    },
+                    "waived": False,
+                    "waiver_reason": None
+                })
 
         hierarchy_accuracy = correct_hierarchy / total_hierarchy_candidates if total_hierarchy_candidates > 0 else 1.0
     else:
         hierarchy_accuracy = None
 
-    # 3. Cell Accuracy (Split into Value Cells and No-Value Cells)
-    # Number of columns based on gold headers or first row
-    num_cols = len(gold_data.get("metadata", {}).get("column_headers", []))
-    if num_cols == 0 and gold_rows:
-        num_cols = len(gold_rows[0].get("values", []))
+    # =================================================================
+    # 4. Cell Verification
+    # =================================================================
+    num_cols_to_compare = min(len(gold_headers), len(parser_headers)) if (gold_headers and parser_headers) else 2
 
     val_cells_total = 0
     val_cells_exact_match = 0
     val_cells_numeric_match = 0
-
     no_val_cells_total = 0
     no_val_cells_match = 0
-
-    cell_discrepancies: List[dict] = []
-
-    # Count parser value cells for precision calculation
-    parser_val_cells_count = 0
-    for p_r in parser_rows:
-        p_v_list = p_r.get("values", [])
-        for c_i in range(num_cols):
-            c_val = p_v_list[c_i] if c_i < len(p_v_list) else None
-            if c_val is not None:
-                parser_val_cells_count += 1
 
     for g_idx, g_row in enumerate(gold_rows):
         g_vals = g_row.get("values", [])
         p_idx = gold_to_parser_map.get(g_idx)
+        p_row = parser_rows[p_idx] if p_idx is not None else None
+        p_vals = p_row.get("values", []) if p_row is not None else None
 
-        # Guard: if row is unaligned, p_vals is None
-        p_vals = parser_rows[p_idx].get("values", []) if p_idx is not None else None
+        for c_i in range(num_cols_to_compare):
+            g_cell = g_vals[c_i] if c_i < len(g_vals) else None
+            is_val_cell = (g_cell is not None)
 
-        for col_idx in range(num_cols):
-            g_cell = g_vals[col_idx] if col_idx < len(g_vals) else None
-            g_is_value_cell = (g_cell is not None)
-
-            g_num, g_nil, g_neg, g_null = parse_numeric_cell(g_cell)
-
-            if p_vals is not None:
-                p_cell = p_vals[col_idx] if col_idx < len(p_vals) else None
-                p_num, p_nil, p_neg, p_null = parse_numeric_cell(p_cell)
-            else:
-                p_cell = None
-                p_num, p_nil, p_neg, p_null = None, False, False, True
-
-            # If row is unaligned, all cells fail automatically
-            row_aligned = (p_idx is not None)
-
-            if g_is_value_cell:
+            if is_val_cell:
                 val_cells_total += 1
-
-                exact_match = False
-                numeric_match = False
-
-                if row_aligned:
-                    # Exact string match
-                    if str(g_cell) == str(p_cell):
-                        exact_match = True
-
-                    # Numeric match
-                    if g_nil:
-                        # Nil must match ONLY nil: "－" vs "0" must fail!
-                        if p_nil:
-                            numeric_match = True
-                    elif g_num is not None:
-                        # Must be a number and not a nil marker, matching sign and value
-                        if p_num is not None and not p_nil:
-                            if abs(g_num - p_num) < 1e-4 and g_neg == p_neg:
-                                numeric_match = True
-
-                if exact_match:
-                    val_cells_exact_match += 1
-                if numeric_match:
-                    val_cells_numeric_match += 1
-
-                if not exact_match or not numeric_match:
-                    cell_discrepancies.append({
-                        "row_index": g_row.get("row_index", g_idx + 1),
-                        "label": g_row.get("label"),
-                        "column_index": col_idx + 1,
-                        "type": "value_cell",
-                        "gold_raw": g_cell,
-                        "parser_raw": p_cell,
-                        "exact_match": exact_match,
-                        "numeric_match": numeric_match,
-                        "reason": "unaligned_row" if not row_aligned else "value_mismatch"
-                    })
-
             else:
-                # No-value (category header) cell
                 no_val_cells_total += 1
-                # Must be null AND row must be aligned!
-                if row_aligned and p_null and p_cell is None:
-                    no_val_cells_match += 1
-                else:
-                    cell_discrepancies.append({
-                        "row_index": g_row.get("row_index", g_idx + 1),
-                        "label": g_row.get("label"),
-                        "column_index": col_idx + 1,
-                        "type": "no_value_cell",
-                        "gold_raw": None,
-                        "parser_raw": p_cell,
-                        "exact_match": False,
-                        "numeric_match": False,
-                        "reason": "unaligned_row" if not row_aligned else "spurious_value_in_header_cell"
-                    })
 
-    # Value cell accuracies
+            if p_idx is None:
+                # Subsumed under missing_row! No duplicate cell entry emitted.
+                continue
+
+            p_has_col = (p_vals is not None and c_i < len(p_vals))
+            p_cell = p_vals[c_i] if p_has_col else None
+
+            # Rate statistics
+            exact = (str(g_cell) == str(p_cell))
+            if is_val_cell:
+                if exact:
+                    val_cells_exact_match += 1
+                g_num, g_nil, g_neg, _ = parse_numeric_cell(g_cell)
+                p_num, p_nil, p_neg, _ = parse_numeric_cell(p_cell)
+                if g_nil and p_nil:
+                    val_cells_numeric_match += 1
+                elif g_num is not None and p_num is not None and not p_nil and abs(g_num - p_num) < 1e-4 and g_neg == p_neg:
+                    val_cells_numeric_match += 1
+            else:
+                if exact and p_cell is None:
+                    no_val_cells_match += 1
+
+            disc = classify_cell_discrepancy(g_cell, p_cell, p_has_col)
+            if disc is not None:
+                disc_type, disc_sev, expected, actual, detail = disc
+                g_row_num = g_row.get("row_index", g_idx + 1)
+                ledger.append({
+                    "id": f"R{g_row_num}:C{c_i + 1}",
+                    "type": disc_type,
+                    "severity": disc_sev,
+                    "expected": expected,
+                    "actual": actual,
+                    "detail": detail,
+                    "waived": False,
+                    "waiver_reason": None
+                })
+
+    # Value cell precision & recall
+    parser_val_cells_count = sum(
+        1 for pr in parser_rows for c in pr.get("values", [])[:num_cols_to_compare] if c is not None
+    )
     val_exact_acc = val_cells_exact_match / val_cells_total if val_cells_total > 0 else 1.0
     val_numeric_acc = val_cells_numeric_match / val_cells_total if val_cells_total > 0 else 1.0
     val_cell_precision = val_cells_exact_match / parser_val_cells_count if parser_val_cells_count > 0 else 1.0
@@ -392,40 +673,34 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
     # No-value cell accuracy
     no_val_acc = no_val_cells_match / no_val_cells_total if no_val_cells_total > 0 else 1.0
 
-    # Overall cell accuracy
-    total_cells = val_cells_total + no_val_cells_total
-    overall_exact_acc = (val_cells_exact_match + no_val_cells_match) / total_cells if total_cells > 0 else 1.0
-    overall_numeric_acc = (val_cells_numeric_match + no_val_cells_match) / total_cells if total_cells > 0 else 1.0
+    # Row metrics
+    num_gold = len(gold_rows)
+    num_parser = len(parser_rows)
+    num_matched = len(matched_pairs)
+    row_recall = num_matched / num_gold if num_gold > 0 else 1.0
+    row_precision = num_matched / num_parser if num_parser > 0 else 1.0
+    row_f1 = (2 * row_precision * row_recall / (row_precision + row_recall)) if (row_precision + row_recall) > 0 else 0.0
 
-    # 4. Numeric-Token Coverage (Multiset Match)
-    gold_tokens = Counter()
-    for r in gold_rows:
-        for val in r.get("values", []):
-            for t in extract_numeric_tokens(val):
-                gold_tokens[t] += 1
-
-    parser_tokens = Counter()
-    for r in parser_rows:
-        for val in r.get("values", []):
-            for t in extract_numeric_tokens(val):
-                parser_tokens[t] += 1
-
+    # Multiset Token Match
+    gold_tokens = Counter(t for r in gold_rows for val in r.get("values", []) for t in extract_numeric_tokens(val))
+    parser_tokens = Counter(t for r in parser_rows for val in r.get("values", []) for t in extract_numeric_tokens(val))
     intersection_count = sum((gold_tokens & parser_tokens).values())
     total_gold_token_count = sum(gold_tokens.values())
     total_parser_token_count = sum(parser_tokens.values())
-
     token_recall = intersection_count / total_gold_token_count if total_gold_token_count > 0 else 1.0
     token_precision = intersection_count / total_parser_token_count if total_parser_token_count > 0 else 1.0
     token_f1 = (2 * token_precision * token_recall / (token_precision + token_recall)) if (token_precision + token_recall) > 0 else 0.0
 
-    # 5. Diagnostic Accounting Checks (remove abs, use signed values with +1 for all addends)
+    # =================================================================
+    # 5. Diagnostic Accounting Checks (Non-gating, separate section)
+    # =================================================================
     checks_def = gold_data.get("checks", [])
     accounting_results: List[dict] = []
 
     for check in checks_def:
         check_id = check.get("check_id")
         check_name = check.get("name")
-        target_g_idx = check.get("target_row_index") - 1  # 0-indexed
+        target_g_idx = check.get("target_row_index") - 1
         addends = check.get("addend_rows", [])
         num_terms = check.get("tolerance_terms", len(addends))
         tolerance = max(1, math.ceil(num_terms / 2.0))
@@ -433,12 +708,8 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
 
         target_p_idx = gold_to_parser_map.get(target_g_idx)
 
-        for c in range(num_cols):
-            col_name = (
-                gold_data.get("metadata", {}).get("column_headers", [])[c]
-                if c < len(gold_data.get("metadata", {}).get("column_headers", []))
-                else f"Col {c+1}"
-            )
+        for c in range(num_cols_to_compare):
+            col_name = gold_headers[c] if c < len(gold_headers) else f"Col {c+1}"
 
             if target_p_idx is None:
                 accounting_results.append({
@@ -473,12 +744,11 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
 
                 addend_vals = parser_rows[addend_p_idx].get("values", [])
                 addend_raw = addend_vals[c] if c < len(addend_vals) else None
-                val, is_nil, _, is_null = parse_numeric_cell(addend_raw)
+                val, is_nil, _, _ = parse_numeric_cell(addend_raw)
 
                 if is_nil:
                     computed_sum += 0.0
                 elif val is not None:
-                    # Use signed printed value directly with sign (+1)
                     computed_sum += sign * val
 
             if missing_addend or target_val is None:
@@ -520,54 +790,52 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
                 "passed": passed
             })
 
+    # =================================================================
+    # 6. Apply Waivers & Match Validation
+    # =================================================================
+    used_waiver_indices: Set[int] = set()
+
+    for entry in ledger:
+        for w_i, w in enumerate(waivers):
+            # A waiver matches if id, type, and actual all match
+            if (
+                w.get("id") == entry["id"] and
+                w.get("type") == entry["type"] and
+                str(w.get("actual")) == str(entry["actual"])
+            ):
+                entry["waived"] = True
+                entry["waiver_reason"] = w.get("reason")
+                used_waiver_indices.add(w_i)
+                break
+
+    stale_waivers = [w for w_i, w in enumerate(waivers) if w_i not in used_waiver_indices]
+
+    # Sort ledger deterministically: CRITICAL then ERROR, then by stable ID
+    ledger.sort(key=entry_sort_key)
+
+    unwaived_count = sum(1 for e in ledger if not e["waived"])
+    waived_count = sum(1 for e in ledger if e["waived"])
+    critical_count = sum(1 for e in ledger if e["severity"] == "CRITICAL" and not e["waived"])
+    error_count = sum(1 for e in ledger if e["severity"] == "ERROR" and not e["waived"])
+
+    exit_code = 1 if unwaived_count > 0 else 0
+    status_str = "FAIL" if exit_code == 1 else "PASS"
+
     report = {
+        "status": status_str,
+        "exit_code": exit_code,
         "summary": {
+            "total_discrepancies": len(ledger),
+            "unwaived": unwaived_count,
+            "waived": waived_count,
+            "critical": critical_count,
+            "error": error_count,
             "gold_rows": num_gold,
             "parser_rows": num_parser,
             "aligned_rows": num_matched,
-            "row_precision": row_precision,
-            "row_recall": row_recall,
-            "row_f1": row_f1,
-            "score_hierarchy": score_hierarchy,
-            "hierarchy_accuracy": hierarchy_accuracy,
-            "cell_metrics": {
-                "value_cells": {
-                    "total": val_cells_total,
-                    "exact_matches": val_cells_exact_match,
-                    "numeric_matches": val_cells_numeric_match,
-                    "exact_accuracy": val_exact_acc,
-                    "numeric_accuracy": val_numeric_acc,
-                    "precision": val_cell_precision,
-                    "recall": val_cell_recall,
-                    "f1": val_cell_f1,
-                },
-                "no_value_cells": {
-                    "total": no_val_cells_total,
-                    "matches": no_val_cells_match,
-                    "accuracy": no_val_acc,
-                },
-                "all_cells": {
-                    "total": total_cells,
-                    "exact_accuracy": overall_exact_acc,
-                    "numeric_accuracy": overall_numeric_acc,
-                }
-            },
-            "token_precision": token_precision,
-            "token_recall": token_recall,
-            "token_f1": token_f1,
         },
-        "discrepancies": {
-            "unmatched_gold_rows": [
-                {"row_index": g_idx + 1, "label": gold_rows[g_idx].get("label")}
-                for g_idx in unmatched_gold_indices
-            ],
-            "unmatched_parser_rows": [
-                {"row_index": p_idx + 1, "label": parser_rows[p_idx].get("label")}
-                for p_idx in unmatched_parser_indices
-            ],
-            "hierarchy_mismatches": hierarchy_details,
-            "cell_mismatches": cell_discrepancies,
-        },
+        "ledger": ledger,
+        "stale_waivers": stale_waivers,
         "diagnostics": {
             "total_accounting_checks": len(accounting_results),
             "passed_checks": sum(1 for c in accounting_results if c["passed"]),
@@ -575,6 +843,22 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
             "rounding_checks": sum(1 for c in accounting_results if c["status"] == "SOURCE_ROUNDING"),
             "failed_checks": sum(1 for c in accounting_results if not c["passed"]),
             "details": accounting_results
+        },
+        "rates": {
+            "row_precision": row_precision,
+            "row_recall": row_recall,
+            "row_f1": row_f1,
+            "score_hierarchy": score_hierarchy,
+            "hierarchy_accuracy": hierarchy_accuracy,
+            "value_cell_exact_accuracy": val_exact_acc,
+            "value_cell_numeric_accuracy": val_numeric_acc,
+            "value_cell_precision": val_cell_precision,
+            "value_cell_recall": val_cell_recall,
+            "value_cell_f1": val_cell_f1,
+            "no_value_cell_accuracy": no_val_acc,
+            "token_precision": token_precision,
+            "token_recall": token_recall,
+            "token_f1": token_f1,
         }
     }
 
@@ -582,154 +866,210 @@ def evaluate_table(gold_data: dict, parser_data: dict) -> dict:
 
 
 def format_text_report(report: dict) -> str:
-    s = report["summary"]
-    cm = s["cell_metrics"]
-    vc = cm["value_cells"]
-    nvc = cm["no_value_cells"]
-    ac = cm["all_cells"]
-    d = report["diagnostics"]
-
-    hier_str = f"{s['hierarchy_accuracy']:.2%}" if s["score_hierarchy"] else "N/A (Flat Indent Variant)"
-
+    """Format human-readable text report: Ledger -> Stale Waivers -> Diagnostics -> Rates footer."""
     out = []
     out.append("=====================================================================")
     out.append("      JAPANESE FINANCIAL TABLE PARSER EVALUATION REPORT              ")
     out.append("=====================================================================")
-    out.append(f" 1. ROW MATCH (Page-Order Sequence Alignment):")
-    out.append(f"    - Gold Rows:      {s['gold_rows']:<4} | Parser Rows: {s['parser_rows']:<4}")
-    out.append(f"    - Aligned Rows:   {s['aligned_rows']:<4}")
-    out.append(f"    - Row Precision:  {s['row_precision']:>7.2%}")
-    out.append(f"    - Row Recall:     {s['row_recall']:>7.2%}")
-    out.append(f"    - Row F1 Score:   {s['row_f1']:>7.2%}")
-    out.append("---------------------------------------------------------------------")
-    out.append(f" 2. HIERARCHY ACCURACY (Parent Visual Indent Match):")
-    out.append(f"    - Hierarchy Match: {hier_str}")
-    out.append("---------------------------------------------------------------------")
-    out.append(f" 3. CELL ACCURACY:")
-    out.append(f"    [A] Value Cells ({vc['total']} cells) -- Gated by --fail-under-cell:")
-    out.append(f"        - Exact Printed String: {vc['exact_accuracy']:>7.2%} ({vc['exact_matches']}/{vc['total']})")
-    out.append(f"        - Normalized Numeric:   {vc['numeric_accuracy']:>7.2%} ({vc['numeric_matches']}/{vc['total']})")
-    out.append(f"        - Precision / Recall:   {vc['precision']:>7.2%} / {vc['recall']:>7.2%} (F1: {vc['f1']:>7.2%})")
-    out.append(f"    [B] No-Value Cells ({nvc['total']} header cells):")
-    out.append(f"        - Null Match Accuracy:  {nvc['accuracy']:>7.2%} ({nvc['matches']}/{nvc['total']})")
-    out.append(f"    [C] Overall Cells ({ac['total']} total cells):")
-    out.append(f"        - Exact String Accuracy: {ac['exact_accuracy']:>7.2%}")
-    out.append(f"        - Numeric Accuracy:      {ac['numeric_accuracy']:>7.2%}")
-    out.append("---------------------------------------------------------------------")
-    out.append(f" 4. NUMERIC-TOKEN COVERAGE (Multiset Match):")
-    out.append(f"    - Token Precision: {s['token_precision']:>7.2%}")
-    out.append(f"    - Token Recall:    {s['token_recall']:>7.2%}")
-    out.append(f"    - Token F1 Score:  {s['token_f1']:>7.2%}")
+
+    ledger = report["ledger"]
+    s = report["summary"]
+    stale = report.get("stale_waivers", [])
+    d = report["diagnostics"]
+    r = report["rates"]
+
+    out.append(f" STATUS: {report['status']} (Exit Code: {report['exit_code']})")
+    out.append(f" Total Discrepancies: {s['total_discrepancies']} | Unwaived: {s['unwaived']} (Critical: {s['critical']}, Error: {s['error']}) | Waived: {s['waived']}")
     out.append("=====================================================================")
-    out.append(f" DIAGNOSTICS: ACCOUNTING CONSISTENCY CHECKS")
-    out.append(f" (Reported separately with scaled rounding tolerance; NOT accuracy)")
+    out.append(" 1. DISCREPANCY LEDGER:")
+
+    if not ledger:
+        out.append("    (Empty ledger - 100% extraction match. PASSED)")
+    else:
+        for idx, entry in enumerate(ledger, 1):
+            tag = "[WAIVED]  " if entry["waived"] else "[UNWAIVED]"
+            out.append(f"    {idx:02d}. {tag} {entry['id']:<14} | Type: {entry['type']:<20} | Severity: {entry['severity']}")
+            out.append(f"        Expected: {json.dumps(entry['expected'], ensure_ascii=False)}")
+            out.append(f"        Actual:   {json.dumps(entry['actual'], ensure_ascii=False)}")
+            if entry.get("detail"):
+                out.append(f"        Detail:   {json.dumps(entry['detail'], ensure_ascii=False)}")
+            if entry["waived"]:
+                out.append(f"        Reason:   {entry.get('waiver_reason')}")
+
+    if stale:
+        out.append("---------------------------------------------------------------------")
+        out.append(f" WARNING: STALE / UNMATCHED WAIVERS ({len(stale)} waivers):")
+        for w in stale:
+            out.append(f"    - ID: {w.get('id')} | Type: {w.get('type')} | Actual: {w.get('actual')} | Reason: {w.get('reason')}")
+
+    out.append("=====================================================================")
+    out.append(" 2. DIAGNOSTICS: ACCOUNTING CONSISTENCY CHECKS (Non-Gating)")
     out.append(f" Total Checks: {d['total_accounting_checks']} | Passed: {d['passed_checks']} (Exact: {d['exact_checks']}, Rounding: {d['rounding_checks']}) | Failed: {d['failed_checks']}")
+    if d["failed_checks"] > 0:
+        for c in d["details"]:
+            if not c["passed"]:
+                out.append(f"    [!] Check '{c['name']}' ({c['column']}): Status {c['status']}, Diff={c.get('diff')}, Tolerance={c.get('tolerance')}")
+
     out.append("=====================================================================")
-
-    disc = report["discrepancies"]
-    if disc["unmatched_gold_rows"]:
-        out.append("\n[!] Unmatched Gold Rows (Dropped):")
-        for r in disc["unmatched_gold_rows"][:5]:
-            out.append(f"    - Row {r['row_index']}: {r['label']}")
-        if len(disc["unmatched_gold_rows"]) > 5:
-            out.append(f"    ... and {len(disc['unmatched_gold_rows']) - 5} more")
-
-    if disc["unmatched_parser_rows"]:
-        out.append("\n[!] Unmatched Parser Rows (Spurious):")
-        for r in disc["unmatched_parser_rows"][:5]:
-            out.append(f"    - Row {r['row_index']}: {r['label']}")
-
-    if disc["hierarchy_mismatches"]:
-        out.append("\n[!] Hierarchy Mismatches:")
-        for h in disc["hierarchy_mismatches"][:5]:
-            out.append(f"    - Row {h['row_index']} ({h['label']}): Expected parent '{h['expected_parent']}' [Idx {h['expected_parent_index']}], got '{h['parser_parent']}' [Idx {h['parser_parent_index']}]")
-
-    if disc["cell_mismatches"]:
-        out.append(f"\n[!] Cell Mismatches ({len(disc['cell_mismatches'])} cells):")
-        for c in disc["cell_mismatches"][:10]:
-            out.append(f"    - Row {c['row_index']} '{c['label']}' Col {c['column_index']} [{c['type']}]: Gold='{c['gold_raw']}', Parser='{c['parser_raw']}' ({c['reason']})")
-        if len(disc["cell_mismatches"]) > 10:
-            out.append(f"    ... and {len(disc['cell_mismatches']) - 10} more")
+    hier_str = f"{r['hierarchy_accuracy']:.2%}" if r["score_hierarchy"] else "N/A"
+    rates_line = (
+        f"Rates: Row F1={r['row_f1']:.2%} | "
+        f"Hierarchy={hier_str} | "
+        f"Value Cell Exact={r['value_cell_exact_accuracy']:.2%} (Numeric={r['value_cell_numeric_accuracy']:.2%}) | "
+        f"Token F1={r['token_f1']:.2%}"
+    )
+    out.append(rates_line)
+    out.append("=====================================================================")
 
     return "\n".join(out)
+
+
+def format_markdown_report(report: dict) -> str:
+    """Format markdown report: Ledger -> Stale Waivers -> Diagnostics -> Rates footer."""
+    ledger = report["ledger"]
+    s = report["summary"]
+    stale = report.get("stale_waivers", [])
+    d = report["diagnostics"]
+    r = report["rates"]
+
+    lines = []
+    lines.append("# Parser Evaluation Discrepancy Ledger")
+    lines.append("")
+    lines.append(f"**Status:** `{report['status']}` (Exit Code `{report['exit_code']}`)")
+    lines.append(f"- **Total Discrepancies:** {s['total_discrepancies']} (Unwaived: **{s['unwaived']}**, Waived: {s['waived']})")
+    lines.append(f"- **Unwaived by Severity:** Critical: **{s['critical']}**, Error: **{s['error']}**")
+    lines.append("")
+    lines.append("## 1. Discrepancy Ledger")
+    lines.append("")
+
+    if not ledger:
+        lines.append("*(Discrepancy ledger is empty — all rows, hierarchy, cells, and metadata match perfectly.)*")
+    else:
+        lines.append("| Status | ID | Type | Severity | Expected | Actual | Details / Waiver Reason |")
+        lines.append("|---|---|---|---|---|---|---|")
+        for entry in ledger:
+            st = "**UNWAIVED**" if not entry["waived"] else "*WAIVED*"
+            exp = json.dumps(entry["expected"], ensure_ascii=False)
+            act = json.dumps(entry["actual"], ensure_ascii=False)
+            det = []
+            if entry.get("detail"):
+                det.append(f"`{json.dumps(entry['detail'], ensure_ascii=False)}`")
+            if entry["waived"]:
+                det.append(f"**Waiver Reason:** {entry.get('waiver_reason')}")
+            det_str = "<br>".join(det)
+            lines.append(f"| {st} | `{entry['id']}` | `{entry['type']}` | `{entry['severity']}` | `{exp}` | `{act}` | {det_str} |")
+
+    if stale:
+        lines.append("")
+        lines.append("## Stale / Unmatched Waivers")
+        lines.append("> [!WARNING]")
+        lines.append(f"> Found {len(stale)} waiver(s) that did not match any active ledger entries:")
+        for w in stale:
+            lines.append(f"- ID: `{w.get('id')}` | Type: `{w.get('type')}` | Actual: `{w.get('actual')}` | Reason: *{w.get('reason')}*")
+
+    lines.append("")
+    lines.append("## 2. Diagnostics: Accounting Consistency (Non-Gating)")
+    lines.append(f"- **Total Checks:** {d['total_accounting_checks']}")
+    lines.append(f"- **Passed:** {d['passed_checks']} (Exact: {d['exact_checks']}, Source Rounding: {d['rounding_checks']})")
+    lines.append(f"- **Failed:** {d['failed_checks']}")
+
+    lines.append("")
+    lines.append("---")
+    hier_str = f"{r['hierarchy_accuracy']:.2%}" if r["score_hierarchy"] else "N/A"
+    lines.append(
+        f"**Rates:** Row F1: {r['row_f1']:.2%} | "
+        f"Hierarchy: {hier_str} | "
+        f"Value Cell Exact: {r['value_cell_exact_accuracy']:.2%} (Numeric: {r['value_cell_numeric_accuracy']:.2%}) | "
+        f"Token F1: {r['token_f1']:.2%}"
+    )
+
+    return "\n".join(lines)
+
+
+def load_waivers(waiver_path: str) -> List[dict]:
+    """Load and validate waivers JSON file. Exits with code 2 on malformed file."""
+    try:
+        with open(waiver_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"[HARNESS ERROR] Could not read waiver file '{waiver_path}': {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if not isinstance(data, list):
+        print(f"[HARNESS ERROR] Waiver file '{waiver_path}' must contain a JSON list of waiver objects.", file=sys.stderr)
+        sys.exit(2)
+
+    for idx, w in enumerate(data):
+        if not isinstance(w, dict):
+            print(f"[HARNESS ERROR] Waiver entry #{idx+1} is not an object.", file=sys.stderr)
+            sys.exit(2)
+        if "id" not in w or "type" not in w or "actual" not in w:
+            print(f"[HARNESS ERROR] Waiver entry #{idx+1} missing required keys ('id', 'type', 'actual').", file=sys.stderr)
+            sys.exit(2)
+        reason = w.get("reason")
+        if not reason or not isinstance(reason, str) or not reason.strip():
+            print(f"[HARNESS ERROR] Waiver entry '{w.get('id')}' missing non-empty written reason.", file=sys.stderr)
+            sys.exit(2)
+
+    return data
 
 
 def main():
     parser = argparse.ArgumentParser(description="Japanese Financial Statement Table Evaluation Harness")
     parser.add_argument("--gold", required=True, help="Path to gold reference JSON")
     parser.add_argument("--input", required=True, help="Path to parser output JSON")
+    parser.add_argument("--waivers", default=None, help="Path to waivers JSON file")
     parser.add_argument("--format", choices=["text", "json", "markdown"], default="text", help="Output report format")
 
-    # Explicit threshold flags (no hidden thresholds)
-    # Note: --fail-under-cell gates specifically on value cells accuracy
-    parser.add_argument("--fail-under-cell", type=float, default=None, help="Fail if value cell exact accuracy is below threshold (0.0 - 1.0)")
-    parser.add_argument("--fail-under-row", type=float, default=None, help="Fail if row match F1 is below threshold (0.0 - 1.0)")
-    parser.add_argument("--fail-under-hierarchy", type=float, default=None, help="Fail if hierarchy accuracy is below threshold (0.0 - 1.0)")
-    parser.add_argument("--fail-under-numeric-token", type=float, default=None, help="Fail if numeric token F1 is below threshold (0.0 - 1.0)")
+    # Removed rate-based flags: detect and reject with exit code 2
+    parser.add_argument("--fail-under-cell", type=float, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--fail-under-row", type=float, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--fail-under-hierarchy", type=float, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--fail-under-numeric-token", type=float, default=None, help=argparse.SUPPRESS)
 
     args = parser.parse_args()
 
-    with open(args.gold, "r", encoding="utf-8") as f:
-        gold_data = json.load(f)
+    # Reject deprecated/removed fail-under flags
+    if any(f is not None for f in (args.fail_under_cell, args.fail_under_row, args.fail_under_hierarchy, args.fail_under_numeric_token)):
+        print(
+            "[HARNESS ERROR] Rate-based pass/fail gates (--fail-under-*) have been removed. "
+            "Pass/fail is now strictly governed by the discrepancy ledger (exit 0 on empty/waived, exit 1 on unwaived).",
+            file=sys.stderr
+        )
+        sys.exit(2)
 
-    with open(args.input, "r", encoding="utf-8") as f:
-        parser_data = json.load(f)
+    try:
+        with open(args.gold, "r", encoding="utf-8") as f:
+            gold_data = json.load(f)
+    except Exception as e:
+        print(f"[HARNESS ERROR] Could not read gold file '{args.gold}': {e}", file=sys.stderr)
+        sys.exit(2)
 
-    report = evaluate_table(gold_data, parser_data)
+    try:
+        with open(args.input, "r", encoding="utf-8") as f:
+            parser_data = json.load(f)
+    except Exception as e:
+        print(f"[HARNESS ERROR] Could not read input file '{args.input}': {e}", file=sys.stderr)
+        sys.exit(2)
+
+    waivers: List[dict] = []
+    if args.waivers:
+        waivers = load_waivers(args.waivers)
+
+    try:
+        report = evaluate_table(gold_data, parser_data, waivers=waivers)
+    except Exception as e:
+        print(f"[HARNESS ERROR] Evaluation failed due to invalid schema: {e}", file=sys.stderr)
+        sys.exit(2)
 
     if args.format == "json":
         print(json.dumps(report, ensure_ascii=False, indent=2))
     elif args.format == "markdown":
-        s = report["summary"]
-        cm = s["cell_metrics"]
-        vc = cm["value_cells"]
-        nvc = cm["no_value_cells"]
-        d = report["diagnostics"]
-        hier_str = f"{s['hierarchy_accuracy']:.2%}" if s["score_hierarchy"] else "N/A"
-        md = f"""# Table Extraction Evaluation Report
-
-| Metric | Score | Details |
-|---|---|---|
-| **Row Match F1** | **{s['row_f1']:.2%}** | Precision: {s['row_precision']:.2%}, Recall: {s['row_recall']:.2%} |
-| **Hierarchy Accuracy** | **{hier_str}** | Parent visual indent match |
-| **Value Cell Exact Accuracy** | **{vc['exact_accuracy']:.2%}** | {vc['exact_matches']}/{vc['total']} value cells |
-| **Value Cell Numeric Accuracy** | **{vc['numeric_accuracy']:.2%}** | {vc['numeric_matches']}/{vc['total']} value cells |
-| **No-Value Cell Accuracy** | **{nvc['accuracy']:.2%}** | {nvc['matches']}/{nvc['total']} header cells |
-| **Numeric-Token F1** | **{s['token_f1']:.2%}** | Multiset token match |
-
-### Accounting Diagnostics (Not Scored)
-- Total Checks: {d['total_accounting_checks']}
-- Passed: {d['passed_checks']} (Exact: {d['exact_checks']}, Source Rounding: {d['rounding_checks']})
-- Discrepancies: {d['failed_checks']}
-"""
-        print(md)
+        print(format_markdown_report(report))
     else:
         print(format_text_report(report))
 
-    # Evaluate fail-under criteria
-    exit_code = 0
-    s = report["summary"]
-    vc = s["cell_metrics"]["value_cells"]
-
-    # --fail-under-cell gates specifically on value cells
-    if args.fail_under_cell is not None and vc["exact_accuracy"] < args.fail_under_cell:
-        print(f"\n[FAILURE] Value cell exact accuracy ({vc['exact_accuracy']:.2%}) is below threshold ({args.fail_under_cell:.2%})", file=sys.stderr)
-        exit_code = 1
-
-    if args.fail_under_row is not None and s["row_f1"] < args.fail_under_row:
-        print(f"\n[FAILURE] Row match F1 ({s['row_f1']:.2%}) is below threshold ({args.fail_under_row:.2%})", file=sys.stderr)
-        exit_code = 1
-
-    if args.fail_under_hierarchy is not None and s["score_hierarchy"] and s["hierarchy_accuracy"] is not None:
-        if s["hierarchy_accuracy"] < args.fail_under_hierarchy:
-            print(f"\n[FAILURE] Hierarchy accuracy ({s['hierarchy_accuracy']:.2%}) is below threshold ({args.fail_under_hierarchy:.2%})", file=sys.stderr)
-            exit_code = 1
-
-    if args.fail_under_numeric_token is not None and s["token_f1"] < args.fail_under_numeric_token:
-        print(f"\n[FAILURE] Numeric token F1 ({s['token_f1']:.2%}) is below threshold ({args.fail_under_numeric_token:.2%})", file=sys.stderr)
-        exit_code = 1
-
-    sys.exit(exit_code)
+    sys.exit(report["exit_code"])
 
 
 if __name__ == "__main__":
