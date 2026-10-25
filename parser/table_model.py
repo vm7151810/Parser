@@ -130,14 +130,17 @@ class ParsedTable:
 
     def to_dict(self) -> dict:
         headers = [
-            p["label"] + (f" ({p['date']})" if p.get("date") else "")
+            p.get("header") or (p["label"] + (f" ({p['raw_date']})" if p.get("raw_date") else f" ({p['date']})" if p.get("date") else ""))
             for p in self.meta.get("periods", [])
         ]
+        self.meta["column_headers"] = headers
         return {
             "column_headers": headers,
+            "metadata": self.meta,
             "meta": self.meta,
             "rows": [r.to_dict() for r in self.rows],
             "accounting_checks": [c.to_dict() for c in self.accounting_checks],
             "audit": self.audit,
         }
+
 

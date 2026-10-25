@@ -142,12 +142,14 @@ def associate_period_headers(
         tokens.sort(key=lambda t: t["top"])
         label_parts = []
         date_str = None
+        raw_date = None
 
         for t in tokens:
             text = t.get("text", "").strip()
             iso_date, ok = normalize_japanese_date(text)
             if ok:
                 date_str = iso_date
+                raw_date = text
             else:
                 # Exclude units and titles
                 if not UNIT_RE.search(text) and not TITLE_RE.search(text) and not AMENDMENT_RE.search(text):
@@ -155,10 +157,14 @@ def associate_period_headers(
 
         raw_period = "".join(label_parts) if label_parts else f"期間_{col_idx+1}"
         period_label = unicodedata.normalize('NFKC', raw_period)
+        header_text = f"{period_label} {raw_date}" if raw_date else period_label
         periods.append({
             "column_index": col_idx,
             "label": period_label,
             "date": date_str,
+            "raw_date": raw_date,
+            "header": header_text,
         })
+
 
     return periods

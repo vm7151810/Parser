@@ -1,8 +1,40 @@
 {
   "column_headers": [
-    "前連結会計年度 (2025-03-31)",
-    "当連結会計年度 (2026-03-31)"
+    "前連結会計年度 (2025年３月31日)",
+    "当連結会計年度 (2026年３月31日)"
   ],
+  "metadata": {
+    "source_file": "balance_sheet.pdf",
+    "page": 1,
+    "title": "連結貸借対照表",
+    "unit": "千円",
+    "amendment": "訂正後",
+    "median_glyph_width_pts": 9.0,
+    "parsed_at": "2026-10-25T19:25:48.216569",
+    "n_columns": 2,
+    "periods": [
+      {
+        "column_index": 0,
+        "label": "前連結会計年度",
+        "date": "2025-03-31",
+        "raw_date": "(2025年３月31日)",
+        "header": "前連結会計年度 (2025年３月31日)"
+      },
+      {
+        "column_index": 1,
+        "label": "当連結会計年度",
+        "date": "2026-03-31",
+        "raw_date": "(2026年３月31日)",
+        "header": "当連結会計年度 (2026年３月31日)"
+      }
+    ],
+    "n_indent_levels": 5,
+    "warnings": [],
+    "column_headers": [
+      "前連結会計年度 (2025年３月31日)",
+      "当連結会計年度 (2026年３月31日)"
+    ]
+  },
   "meta": {
     "source_file": "balance_sheet.pdf",
     "page": 1,
@@ -10,22 +42,30 @@
     "unit": "千円",
     "amendment": "訂正後",
     "median_glyph_width_pts": 9.0,
-    "parsed_at": "2026-10-25T17:35:54.801942",
+    "parsed_at": "2026-10-25T19:25:48.216569",
     "n_columns": 2,
     "periods": [
       {
         "column_index": 0,
         "label": "前連結会計年度",
-        "date": "2025-03-31"
+        "date": "2025-03-31",
+        "raw_date": "(2025年３月31日)",
+        "header": "前連結会計年度 (2025年３月31日)"
       },
       {
         "column_index": 1,
         "label": "当連結会計年度",
-        "date": "2026-03-31"
+        "date": "2026-03-31",
+        "raw_date": "(2026年３月31日)",
+        "header": "当連結会計年度 (2026年３月31日)"
       }
     ],
     "n_indent_levels": 5,
-    "warnings": []
+    "warnings": [],
+    "column_headers": [
+      "前連結会計年度 (2025年３月31日)",
+      "当連結会計年度 (2026年３月31日)"
+    ]
   },
   "rows": [
     {
