@@ -63,6 +63,14 @@ UrAI/
 ├── output/
 │   ├── balance_sheet_p1.json     # Sample output JSON for balance_sheet.pdf
 │   └── balance_sheet_p1.md       # Sample output Markdown for balance_sheet.pdf
+├── agent/
+│   ├── README.md                 # Master index & methodology of AI collaboration logs
+│   ├── 01_creation_eval_ground_truth.md
+│   ├── 02_creation_parser_pipeline.md
+│   ├── 03_audit_chat_a_parser_agnosticism.md
+│   ├── 04_audit_chat_b_accounting_verification.md
+│   ├── 05_audit_chat_c_evaluator_discrepancy_ledger.md
+│   └── 06_audit_chat_d_specification_audit.md
 ├── main.py                       # CLI entry point
 ├── requirements.txt              # Pinned Python dependencies
 └── README.md                     # Documentation
@@ -112,7 +120,8 @@ Output metrics reported:
 - **Cell Exact Accuracy**: Verbatim printed string match on value cells (74 cells).
 - **Cell Numeric Accuracy**: Signed float match on value cells.
 - **Token F1**: Multiset match of all printed digit sequences against gold.
-- **Accounting Consistency** (non-gating diagnostic): Subtotals and net values checked with scaled rounding tolerance $\max(1, \lceil n/2 ceil)$.
+- **Accounting Consistency** (non-gating diagnostic): Subtotals and net values checked with scaled rounding tolerance $\max(1, \lceil n/2 
+ceil)$.
 - **Exit codes**: 0 = no unwaived discrepancies, 1 = discrepancies exist, 2 = harness error.
 
 ### Run Automated Tests
