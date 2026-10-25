@@ -1,0 +1,3562 @@
+{
+  "column_headers": [
+    "前連結会計年度 (2025-03-31)",
+    "当連結会計年度 (2026-03-31)"
+  ],
+  "meta": {
+    "source_file": "balance_sheet.pdf",
+    "page": 1,
+    "title": "連結貸借対照表",
+    "unit": "千円",
+    "amendment": "訂正後",
+    "median_glyph_width_pts": 9.0,
+    "parsed_at": "2026-10-25T17:35:54.801942",
+    "n_columns": 2,
+    "periods": [
+      {
+        "column_index": 0,
+        "label": "前連結会計年度",
+        "date": "2025-03-31"
+      },
+      {
+        "column_index": 1,
+        "label": "当連結会計年度",
+        "date": "2026-03-31"
+      }
+    ],
+    "n_indent_levels": 5,
+    "warnings": []
+  },
+  "rows": [
+    {
+      "id": "row_001",
+      "structural_path": [
+        "資産の部"
+      ],
+      "label": "資産の部",
+      "level": 0,
+      "parent_index": null,
+      "parent_label": null,
+      "row_type": "section",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": null,
+      "values": [
+        null,
+        null
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        },
+        "当連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 62.28,
+        "y0": 148.23,
+        "x1": 98.28,
+        "y1": 157.23,
+        "token_index": 8
+      },
+      "flags": []
+    },
+    {
+      "id": "row_002",
+      "structural_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "label": "流動資産",
+      "level": 1,
+      "parent_index": 1,
+      "parent_label": "資産の部",
+      "row_type": "header",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": null,
+      "values": [
+        null,
+        null
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        },
+        "当連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 75.24,
+        "y0": 160.23,
+        "x1": 111.24,
+        "y1": 169.23,
+        "token_index": 9
+      },
+      "flags": []
+    },
+    {
+      "id": "row_003",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "現金及び預金"
+      ],
+      "label": "現金及び預金",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "2,002,429",
+        "608,281"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "2,002,429",
+          "numeric": 2002429.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 172.23,
+            "x1": 397.52,
+            "y1": 181.23,
+            "token_index": 11
+          }
+        },
+        "当連結会計年度": {
+          "raw": "608,281",
+          "numeric": 608281.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 172.23,
+            "x1": 522.55,
+            "y1": 181.23,
+            "token_index": 12
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 172.23,
+        "x1": 142.2,
+        "y1": 181.23,
+        "token_index": 10
+      },
+      "flags": []
+    },
+    {
+      "id": "row_004",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "受取手形"
+      ],
+      "label": "受取手形",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "20,659",
+        "26,333"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "20,659",
+          "numeric": 20659.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 184.23,
+            "x1": 397.51,
+            "y1": 193.23,
+            "token_index": 14
+          }
+        },
+        "当連結会計年度": {
+          "raw": "26,333",
+          "numeric": 26333.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 184.23,
+            "x1": 522.55,
+            "y1": 193.23,
+            "token_index": 15
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 184.23,
+        "x1": 124.2,
+        "y1": 193.23,
+        "token_index": 13
+      },
+      "flags": []
+    },
+    {
+      "id": "row_005",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "売掛金"
+      ],
+      "label": "売掛金",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "2,019,476",
+        "884,339"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "2,019,476",
+          "numeric": 2019476.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 196.23,
+            "x1": 397.52,
+            "y1": 205.23,
+            "token_index": 17
+          }
+        },
+        "当連結会計年度": {
+          "raw": "884,339",
+          "numeric": 884339.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 196.23,
+            "x1": 522.55,
+            "y1": 205.23,
+            "token_index": 18
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 196.23,
+        "x1": 115.2,
+        "y1": 205.23,
+        "token_index": 16
+      },
+      "flags": []
+    },
+    {
+      "id": "row_006",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "電子記録債権"
+      ],
+      "label": "電子記録債権",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "564,667",
+        "370,468"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "564,667",
+          "numeric": 564667.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 208.23,
+            "x1": 397.51,
+            "y1": 217.23,
+            "token_index": 20
+          }
+        },
+        "当連結会計年度": {
+          "raw": "370,468",
+          "numeric": 370468.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 208.23,
+            "x1": 522.55,
+            "y1": 217.23,
+            "token_index": 21
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 208.23,
+        "x1": 142.2,
+        "y1": 217.23,
+        "token_index": 19
+      },
+      "flags": []
+    },
+    {
+      "id": "row_007",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "商品及び製品"
+      ],
+      "label": "商品及び製品",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "589,488",
+        "1,019,663"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "589,488",
+          "numeric": 589488.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 220.23,
+            "x1": 397.51,
+            "y1": 229.23,
+            "token_index": 23
+          }
+        },
+        "当連結会計年度": {
+          "raw": "1,019,663",
+          "numeric": 1019663.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 220.23,
+            "x1": 522.56,
+            "y1": 229.23,
+            "token_index": 24
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 220.23,
+        "x1": 142.2,
+        "y1": 229.23,
+        "token_index": 22
+      },
+      "flags": []
+    },
+    {
+      "id": "row_008",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "仕掛品"
+      ],
+      "label": "仕掛品",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "186,748",
+        "55,344"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "186,748",
+          "numeric": 186748.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 232.23,
+            "x1": 397.51,
+            "y1": 241.23,
+            "token_index": 26
+          }
+        },
+        "当連結会計年度": {
+          "raw": "55,344",
+          "numeric": 55344.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 232.23,
+            "x1": 522.55,
+            "y1": 241.23,
+            "token_index": 27
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 232.23,
+        "x1": 115.2,
+        "y1": 241.23,
+        "token_index": 25
+      },
+      "flags": []
+    },
+    {
+      "id": "row_009",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "原材料及び貯蔵品"
+      ],
+      "label": "原材料及び貯蔵品",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "370,403",
+        "136,082"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "370,403",
+          "numeric": 370403.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 244.23,
+            "x1": 397.51,
+            "y1": 253.23,
+            "token_index": 29
+          }
+        },
+        "当連結会計年度": {
+          "raw": "136,082",
+          "numeric": 136082.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 244.23,
+            "x1": 522.55,
+            "y1": 253.23,
+            "token_index": 30
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 244.23,
+        "x1": 160.2,
+        "y1": 253.23,
+        "token_index": 28
+      },
+      "flags": []
+    },
+    {
+      "id": "row_010",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "短期貸付金"
+      ],
+      "label": "短期貸付金",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "7,530",
+        "30,000"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "7,530",
+          "numeric": 7530.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 374.88,
+            "y0": 256.23,
+            "x1": 397.51,
+            "y1": 265.23,
+            "token_index": 32
+          }
+        },
+        "当連結会計年度": {
+          "raw": "30,000",
+          "numeric": 30000.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 256.23,
+            "x1": 522.55,
+            "y1": 265.23,
+            "token_index": 33
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 256.23,
+        "x1": 133.2,
+        "y1": 265.23,
+        "token_index": 31
+      },
+      "flags": []
+    },
+    {
+      "id": "row_011",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "その他"
+      ],
+      "label": "その他",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "105,260",
+        "246,895"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "105,260",
+          "numeric": 105260.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 268.23,
+            "x1": 397.51,
+            "y1": 277.23,
+            "token_index": 35
+          }
+        },
+        "当連結会計年度": {
+          "raw": "246,895",
+          "numeric": 246895.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 268.23,
+            "x1": 522.55,
+            "y1": 277.23,
+            "token_index": 36
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 268.23,
+        "x1": 115.2,
+        "y1": 277.23,
+        "token_index": 34
+      },
+      "flags": []
+    },
+    {
+      "id": "row_012",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "貸倒引当金"
+      ],
+      "label": "貸倒引当金",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "contra_standalone",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "流動資産"
+      ],
+      "values": [
+        "△2,979",
+        "△0"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "△2,979",
+          "numeric": -2979.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 280.23,
+            "x1": 397.51,
+            "y1": 289.23,
+            "token_index": 38
+          }
+        },
+        "当連結会計年度": {
+          "raw": "△0",
+          "numeric": -0.0,
+          "nil": false,
+          "negative": true,
+          "flags": [
+            "negative_zero"
+          ],
+          "provenance": {
+            "page": 1,
+            "x0": 508.92,
+            "y0": 280.23,
+            "x1": 522.42,
+            "y1": 289.23,
+            "token_index": 39
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 280.23,
+        "x1": 133.2,
+        "y1": 289.23,
+        "token_index": 37
+      },
+      "flags": []
+    },
+    {
+      "id": "row_013",
+      "structural_path": [
+        "資産の部",
+        "流動資産",
+        "流動資産合計"
+      ],
+      "label": "流動資産合計",
+      "level": 2,
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "row_type": "subtotal",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部"
+      ],
+      "values": [
+        "5,863,684",
+        "3,377,407"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "5,863,684",
+          "numeric": 5863684.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 292.95,
+            "x1": 397.52,
+            "y1": 301.95,
+            "token_index": 41
+          }
+        },
+        "当連結会計年度": {
+          "raw": "3,377,407",
+          "numeric": 3377407.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 292.95,
+            "x1": 522.56,
+            "y1": 301.95,
+            "token_index": 42
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 292.95,
+        "x1": 142.2,
+        "y1": 301.95,
+        "token_index": 40
+      },
+      "flags": []
+    },
+    {
+      "id": "row_014",
+      "structural_path": [
+        "資産の部",
+        "固定資産"
+      ],
+      "label": "固定資産",
+      "level": 1,
+      "parent_index": 1,
+      "parent_label": "資産の部",
+      "row_type": "header",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": null,
+      "values": [
+        null,
+        null
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        },
+        "当連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 75.24,
+        "y0": 305.79,
+        "x1": 111.24,
+        "y1": 314.79,
+        "token_index": 43
+      },
+      "flags": []
+    },
+    {
+      "id": "row_015",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "label": "有形固定資産",
+      "level": 2,
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "row_type": "header",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": null,
+      "values": [
+        null,
+        null
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        },
+        "当連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 317.79,
+        "x1": 142.2,
+        "y1": 326.79,
+        "token_index": 44
+      },
+      "flags": []
+    },
+    {
+      "id": "row_016",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "建物及び構築物"
+      ],
+      "label": "建物及び構築物",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "gross",
+      "gross_parent": null,
+      "block_id": "block_建物及び構築物_15",
+      "sum_parent_path": null,
+      "values": [
+        "2,121,360",
+        "1,880,082"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "2,121,360",
+          "numeric": 2121360.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 329.79,
+            "x1": 397.52,
+            "y1": 338.79,
+            "token_index": 46
+          }
+        },
+        "当連結会計年度": {
+          "raw": "1,880,082",
+          "numeric": 1880082.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 329.79,
+            "x1": 522.56,
+            "y1": 338.79,
+            "token_index": 47
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 329.79,
+        "x1": 164.28,
+        "y1": 338.79,
+        "token_index": 45
+      },
+      "flags": []
+    },
+    {
+      "id": "row_017",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "建物及び構築物",
+        "減価償却累計額"
+      ],
+      "label": "減価償却累計額",
+      "level": 4,
+      "parent_index": 16,
+      "parent_label": "建物及び構築物",
+      "row_type": "contra",
+      "gross_parent": "建物及び構築物",
+      "block_id": "block_建物及び構築物_15",
+      "sum_parent_path": null,
+      "values": [
+        "△1,923,585",
+        "△1,640,253"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "△1,923,585",
+          "numeric": -1923585.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 347.88,
+            "y0": 341.79,
+            "x1": 397.52,
+            "y1": 350.79,
+            "token_index": 49
+          }
+        },
+        "当連結会計年度": {
+          "raw": "△1,640,253",
+          "numeric": -1640253.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 472.92,
+            "y0": 341.79,
+            "x1": 522.56,
+            "y1": 350.79,
+            "token_index": 50
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 341.79,
+        "x1": 177.24,
+        "y1": 350.79,
+        "token_index": 48
+      },
+      "flags": []
+    },
+    {
+      "id": "row_018",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "建物及び構築物",
+        "建物及び構築物(純額)"
+      ],
+      "label": "建物及び構築物(純額)",
+      "level": 4,
+      "parent_index": 16,
+      "parent_label": "建物及び構築物",
+      "row_type": "net",
+      "gross_parent": "建物及び構築物",
+      "block_id": "block_建物及び構築物_15",
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "values": [
+        "197,775",
+        "239,828"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "197,775",
+          "numeric": 197775.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 354.51,
+            "x1": 397.51,
+            "y1": 363.51,
+            "token_index": 52
+          }
+        },
+        "当連結会計年度": {
+          "raw": "239,828",
+          "numeric": 239828.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 354.51,
+            "x1": 522.55,
+            "y1": 363.51,
+            "token_index": 53
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 354.51,
+        "x1": 213.24,
+        "y1": 363.51,
+        "token_index": 51
+      },
+      "flags": []
+    },
+    {
+      "id": "row_019",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "機械装置及び運搬具"
+      ],
+      "label": "機械装置及び運搬具",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "gross",
+      "gross_parent": null,
+      "block_id": "block_機械装置及び運搬具_18",
+      "sum_parent_path": null,
+      "values": [
+        "4,024,922",
+        "2,250,799"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "4,024,922",
+          "numeric": 4024922.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 367.23,
+            "x1": 397.52,
+            "y1": 376.23,
+            "token_index": 55
+          }
+        },
+        "当連結会計年度": {
+          "raw": "2,250,799",
+          "numeric": 2250799.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 367.23,
+            "x1": 522.56,
+            "y1": 376.23,
+            "token_index": 56
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 367.23,
+        "x1": 182.28,
+        "y1": 376.23,
+        "token_index": 54
+      },
+      "flags": []
+    },
+    {
+      "id": "row_020",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "機械装置及び運搬具",
+        "減価償却累計額"
+      ],
+      "label": "減価償却累計額",
+      "level": 4,
+      "parent_index": 19,
+      "parent_label": "機械装置及び運搬具",
+      "row_type": "contra",
+      "gross_parent": "機械装置及び運搬具",
+      "block_id": "block_機械装置及び運搬具_18",
+      "sum_parent_path": null,
+      "values": [
+        "△3,634,165",
+        "△1,914,091"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "△3,634,165",
+          "numeric": -3634165.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 347.88,
+            "y0": 379.23,
+            "x1": 397.52,
+            "y1": 388.23,
+            "token_index": 58
+          }
+        },
+        "当連結会計年度": {
+          "raw": "△1,914,091",
+          "numeric": -1914091.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 472.92,
+            "y0": 379.23,
+            "x1": 522.56,
+            "y1": 388.23,
+            "token_index": 59
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 379.23,
+        "x1": 177.24,
+        "y1": 388.23,
+        "token_index": 57
+      },
+      "flags": []
+    },
+    {
+      "id": "row_021",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "機械装置及び運搬具",
+        "機械装置及び運搬具(純額)"
+      ],
+      "label": "機械装置及び運搬具(純額)",
+      "level": 4,
+      "parent_index": 19,
+      "parent_label": "機械装置及び運搬具",
+      "row_type": "net",
+      "gross_parent": "機械装置及び運搬具",
+      "block_id": "block_機械装置及び運搬具_18",
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "values": [
+        "390,757",
+        "336,708"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "390,757",
+          "numeric": 390757.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 391.95,
+            "x1": 397.51,
+            "y1": 400.95,
+            "token_index": 61
+          }
+        },
+        "当連結会計年度": {
+          "raw": "336,708",
+          "numeric": 336708.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 391.95,
+            "x1": 522.55,
+            "y1": 400.95,
+            "token_index": 62
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 391.95,
+        "x1": 231.24,
+        "y1": 400.95,
+        "token_index": 60
+      },
+      "flags": []
+    },
+    {
+      "id": "row_022",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "土地"
+      ],
+      "label": "土地",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "values": [
+        "768,976",
+        "705,403"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "768,976",
+          "numeric": 768976.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 404.79,
+            "x1": 397.51,
+            "y1": 413.79,
+            "token_index": 64
+          }
+        },
+        "当連結会計年度": {
+          "raw": "705,403",
+          "numeric": 705403.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 404.79,
+            "x1": 522.55,
+            "y1": 413.79,
+            "token_index": 65
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 404.79,
+        "x1": 119.28,
+        "y1": 413.79,
+        "token_index": 63
+      },
+      "flags": []
+    },
+    {
+      "id": "row_023",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "リース資産"
+      ],
+      "label": "リース資産",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "gross",
+      "gross_parent": null,
+      "block_id": "block_リース資産_22",
+      "sum_parent_path": null,
+      "values": [
+        "210,746",
+        "213,939"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "210,746",
+          "numeric": 210746.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 416.79,
+            "x1": 397.51,
+            "y1": 425.79,
+            "token_index": 67
+          }
+        },
+        "当連結会計年度": {
+          "raw": "213,939",
+          "numeric": 213939.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 416.79,
+            "x1": 522.55,
+            "y1": 425.79,
+            "token_index": 68
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 416.79,
+        "x1": 146.28,
+        "y1": 425.79,
+        "token_index": 66
+      },
+      "flags": []
+    },
+    {
+      "id": "row_024",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "リース資産",
+        "減価償却累計額"
+      ],
+      "label": "減価償却累計額",
+      "level": 4,
+      "parent_index": 23,
+      "parent_label": "リース資産",
+      "row_type": "contra",
+      "gross_parent": "リース資産",
+      "block_id": "block_リース資産_22",
+      "sum_parent_path": null,
+      "values": [
+        "△147,599",
+        "△172,066"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "△147,599",
+          "numeric": -147599.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 428.79,
+            "x1": 397.51,
+            "y1": 437.79,
+            "token_index": 70
+          }
+        },
+        "当連結会計年度": {
+          "raw": "△172,066",
+          "numeric": -172066.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 428.79,
+            "x1": 522.55,
+            "y1": 437.79,
+            "token_index": 71
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 428.79,
+        "x1": 177.24,
+        "y1": 437.79,
+        "token_index": 69
+      },
+      "flags": []
+    },
+    {
+      "id": "row_025",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "リース資産",
+        "リース資産(純額)"
+      ],
+      "label": "リース資産(純額)",
+      "level": 4,
+      "parent_index": 23,
+      "parent_label": "リース資産",
+      "row_type": "net",
+      "gross_parent": "リース資産",
+      "block_id": "block_リース資産_22",
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "values": [
+        "63,146",
+        "41,872"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "63,146",
+          "numeric": 63146.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 441.51,
+            "x1": 397.51,
+            "y1": 450.51,
+            "token_index": 73
+          }
+        },
+        "当連結会計年度": {
+          "raw": "41,872",
+          "numeric": 41872.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 441.51,
+            "x1": 522.55,
+            "y1": 450.51,
+            "token_index": 74
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 441.51,
+        "x1": 195.24,
+        "y1": 450.51,
+        "token_index": 72
+      },
+      "flags": []
+    },
+    {
+      "id": "row_026",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "建設仮勘定"
+      ],
+      "label": "建設仮勘定",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "values": [
+        "－",
+        "4,553"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "－",
+          "numeric": null,
+          "nil": true,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 388.44,
+            "y0": 454.23,
+            "x1": 397.44,
+            "y1": 463.23,
+            "token_index": 76
+          }
+        },
+        "当連結会計年度": {
+          "raw": "4,553",
+          "numeric": 4553.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 499.92,
+            "y0": 454.23,
+            "x1": 522.55,
+            "y1": 463.23,
+            "token_index": 77
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 454.23,
+        "x1": 146.28,
+        "y1": 463.23,
+        "token_index": 75
+      },
+      "flags": []
+    },
+    {
+      "id": "row_027",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "その他"
+      ],
+      "label": "その他",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "gross",
+      "gross_parent": null,
+      "block_id": "block_その他_26",
+      "sum_parent_path": null,
+      "values": [
+        "848,814",
+        "446,126"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "848,814",
+          "numeric": 848814.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 466.95,
+            "x1": 397.51,
+            "y1": 475.95,
+            "token_index": 79
+          }
+        },
+        "当連結会計年度": {
+          "raw": "446,126",
+          "numeric": 446126.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 466.95,
+            "x1": 522.55,
+            "y1": 475.95,
+            "token_index": 80
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 466.95,
+        "x1": 128.28,
+        "y1": 475.95,
+        "token_index": 78
+      },
+      "flags": []
+    },
+    {
+      "id": "row_028",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "その他",
+        "減価償却累計額"
+      ],
+      "label": "減価償却累計額",
+      "level": 4,
+      "parent_index": 27,
+      "parent_label": "その他",
+      "row_type": "contra",
+      "gross_parent": "その他",
+      "block_id": "block_その他_26",
+      "sum_parent_path": null,
+      "values": [
+        "△840,375",
+        "△421,883"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "△840,375",
+          "numeric": -840375.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 478.95,
+            "x1": 397.51,
+            "y1": 487.95,
+            "token_index": 82
+          }
+        },
+        "当連結会計年度": {
+          "raw": "△421,883",
+          "numeric": -421883.0,
+          "nil": false,
+          "negative": true,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 478.95,
+            "x1": 522.55,
+            "y1": 487.95,
+            "token_index": 83
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 478.95,
+        "x1": 177.24,
+        "y1": 487.95,
+        "token_index": 81
+      },
+      "flags": []
+    },
+    {
+      "id": "row_029",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "その他",
+        "その他(純額)"
+      ],
+      "label": "その他(純額)",
+      "level": 4,
+      "parent_index": 27,
+      "parent_label": "その他",
+      "row_type": "net",
+      "gross_parent": "その他",
+      "block_id": "block_その他_26",
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産"
+      ],
+      "values": [
+        "8,439",
+        "24,243"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "8,439",
+          "numeric": 8439.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 374.88,
+            "y0": 491.79,
+            "x1": 397.51,
+            "y1": 500.79,
+            "token_index": 85
+          }
+        },
+        "当連結会計年度": {
+          "raw": "24,243",
+          "numeric": 24243.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 491.79,
+            "x1": 522.55,
+            "y1": 500.79,
+            "token_index": 86
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 114.24,
+        "y0": 491.79,
+        "x1": 177.24,
+        "y1": 500.79,
+        "token_index": 84
+      },
+      "flags": []
+    },
+    {
+      "id": "row_030",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "有形固定資産合計"
+      ],
+      "label": "有形固定資産合計",
+      "level": 3,
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "row_type": "subtotal",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産"
+      ],
+      "values": [
+        "1,429,094",
+        "1,352,610"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "1,429,094",
+          "numeric": 1429094.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 504.51,
+            "x1": 397.52,
+            "y1": 513.51,
+            "token_index": 88
+          }
+        },
+        "当連結会計年度": {
+          "raw": "1,352,610",
+          "numeric": 1352610.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 504.51,
+            "x1": 522.56,
+            "y1": 513.51,
+            "token_index": 89
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 504.51,
+        "x1": 173.28,
+        "y1": 513.51,
+        "token_index": 87
+      },
+      "flags": []
+    },
+    {
+      "id": "row_031",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産"
+      ],
+      "label": "無形固定資産",
+      "level": 2,
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "row_type": "header",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": null,
+      "values": [
+        null,
+        null
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        },
+        "当連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 517.23,
+        "x1": 142.2,
+        "y1": 526.23,
+        "token_index": 90
+      },
+      "flags": []
+    },
+    {
+      "id": "row_032",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産",
+        "リース資産"
+      ],
+      "label": "リース資産",
+      "level": 3,
+      "parent_index": 31,
+      "parent_label": "無形固定資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産"
+      ],
+      "values": [
+        "34,190",
+        "21,402"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "34,190",
+          "numeric": 34190.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 529.23,
+            "x1": 397.51,
+            "y1": 538.23,
+            "token_index": 92
+          }
+        },
+        "当連結会計年度": {
+          "raw": "21,402",
+          "numeric": 21402.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 529.23,
+            "x1": 522.55,
+            "y1": 538.23,
+            "token_index": 93
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 529.23,
+        "x1": 146.28,
+        "y1": 538.23,
+        "token_index": 91
+      },
+      "flags": []
+    },
+    {
+      "id": "row_033",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産",
+        "その他"
+      ],
+      "label": "その他",
+      "level": 3,
+      "parent_index": 31,
+      "parent_label": "無形固定資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産"
+      ],
+      "values": [
+        "10,070",
+        "14,466"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "10,070",
+          "numeric": 10070.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 541.23,
+            "x1": 397.51,
+            "y1": 550.23,
+            "token_index": 95
+          }
+        },
+        "当連結会計年度": {
+          "raw": "14,466",
+          "numeric": 14466.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 541.23,
+            "x1": 522.55,
+            "y1": 550.23,
+            "token_index": 96
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 541.23,
+        "x1": 128.28,
+        "y1": 550.23,
+        "token_index": 94
+      },
+      "flags": []
+    },
+    {
+      "id": "row_034",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産",
+        "無形固定資産合計"
+      ],
+      "label": "無形固定資産合計",
+      "level": 3,
+      "parent_index": 31,
+      "parent_label": "無形固定資産",
+      "row_type": "subtotal",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産"
+      ],
+      "values": [
+        "44,261",
+        "35,869"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "44,261",
+          "numeric": 44261.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 553.95,
+            "x1": 397.51,
+            "y1": 562.95,
+            "token_index": 98
+          }
+        },
+        "当連結会計年度": {
+          "raw": "35,869",
+          "numeric": 35869.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 553.95,
+            "x1": 522.55,
+            "y1": 562.95,
+            "token_index": 99
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 553.95,
+        "x1": 173.28,
+        "y1": 562.95,
+        "token_index": 97
+      },
+      "flags": []
+    },
+    {
+      "id": "row_035",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産"
+      ],
+      "label": "投資その他の資産",
+      "level": 2,
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "row_type": "header",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": null,
+      "values": [
+        null,
+        null
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        },
+        "当連結会計年度": {
+          "raw": "",
+          "numeric": null,
+          "nil": false,
+          "negative": false,
+          "flags": [
+            "cell_missing"
+          ]
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 566.79,
+        "x1": 160.2,
+        "y1": 575.79,
+        "token_index": 100
+      },
+      "flags": []
+    },
+    {
+      "id": "row_036",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "投資有価証券"
+      ],
+      "label": "投資有価証券",
+      "level": 3,
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産"
+      ],
+      "values": [
+        "44,180",
+        "218,836"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "44,180",
+          "numeric": 44180.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 578.79,
+            "x1": 397.51,
+            "y1": 587.79,
+            "token_index": 102
+          }
+        },
+        "当連結会計年度": {
+          "raw": "218,836",
+          "numeric": 218836.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 578.79,
+            "x1": 522.55,
+            "y1": 587.79,
+            "token_index": 103
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 578.79,
+        "x1": 155.28,
+        "y1": 587.79,
+        "token_index": 101
+      },
+      "flags": []
+    },
+    {
+      "id": "row_037",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "関係会社株式"
+      ],
+      "label": "関係会社株式",
+      "level": 3,
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産"
+      ],
+      "values": [
+        "1,123",
+        "1,123"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "1,123",
+          "numeric": 1123.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 374.88,
+            "y0": 590.79,
+            "x1": 397.51,
+            "y1": 599.79,
+            "token_index": 105
+          }
+        },
+        "当連結会計年度": {
+          "raw": "1,123",
+          "numeric": 1123.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 499.92,
+            "y0": 590.79,
+            "x1": 522.55,
+            "y1": 599.79,
+            "token_index": 106
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 590.79,
+        "x1": 155.28,
+        "y1": 599.79,
+        "token_index": 104
+      },
+      "flags": []
+    },
+    {
+      "id": "row_038",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "長期貸付金"
+      ],
+      "label": "長期貸付金",
+      "level": 3,
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産"
+      ],
+      "values": [
+        "－",
+        "62,000"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "－",
+          "numeric": null,
+          "nil": true,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 388.44,
+            "y0": 602.79,
+            "x1": 397.44,
+            "y1": 611.79,
+            "token_index": 108
+          }
+        },
+        "当連結会計年度": {
+          "raw": "62,000",
+          "numeric": 62000.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 602.79,
+            "x1": 522.55,
+            "y1": 611.79,
+            "token_index": 109
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 602.79,
+        "x1": 146.28,
+        "y1": 611.79,
+        "token_index": 107
+      },
+      "flags": []
+    },
+    {
+      "id": "row_039",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "退職給付に係る資産"
+      ],
+      "label": "退職給付に係る資産",
+      "level": 3,
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産"
+      ],
+      "values": [
+        "18,404",
+        "16,435"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "18,404",
+          "numeric": 18404.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 370.44,
+            "y0": 614.79,
+            "x1": 397.51,
+            "y1": 623.79,
+            "token_index": 111
+          }
+        },
+        "当連結会計年度": {
+          "raw": "16,435",
+          "numeric": 16435.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 614.79,
+            "x1": 522.55,
+            "y1": 623.79,
+            "token_index": 112
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 614.79,
+        "x1": 182.28,
+        "y1": 623.79,
+        "token_index": 110
+      },
+      "flags": []
+    },
+    {
+      "id": "row_040",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "その他"
+      ],
+      "label": "その他",
+      "level": 3,
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "row_type": "item",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産"
+      ],
+      "values": [
+        "133,361",
+        "70,967"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "133,361",
+          "numeric": 133361.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 626.79,
+            "x1": 397.51,
+            "y1": 635.79,
+            "token_index": 114
+          }
+        },
+        "当連結会計年度": {
+          "raw": "70,967",
+          "numeric": 70967.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 495.48,
+            "y0": 626.79,
+            "x1": 522.55,
+            "y1": 635.79,
+            "token_index": 115
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 626.79,
+        "x1": 128.28,
+        "y1": 635.79,
+        "token_index": 113
+      },
+      "flags": []
+    },
+    {
+      "id": "row_041",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "投資その他の資産合計"
+      ],
+      "label": "投資その他の資産合計",
+      "level": 3,
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "row_type": "subtotal",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部",
+        "固定資産"
+      ],
+      "values": [
+        "197,069",
+        "369,362"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "197,069",
+          "numeric": 197069.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 365.88,
+            "y0": 639.51,
+            "x1": 397.51,
+            "y1": 648.51,
+            "token_index": 117
+          }
+        },
+        "当連結会計年度": {
+          "raw": "369,362",
+          "numeric": 369362.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 490.92,
+            "y0": 639.51,
+            "x1": 522.55,
+            "y1": 648.51,
+            "token_index": 118
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 101.28,
+        "y0": 639.51,
+        "x1": 191.28,
+        "y1": 648.51,
+        "token_index": 116
+      },
+      "flags": []
+    },
+    {
+      "id": "row_042",
+      "structural_path": [
+        "資産の部",
+        "固定資産",
+        "固定資産合計"
+      ],
+      "label": "固定資産合計",
+      "level": 2,
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "row_type": "subtotal",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部"
+      ],
+      "values": [
+        "1,670,426",
+        "1,757,841"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "1,670,426",
+          "numeric": 1670426.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 652.23,
+            "x1": 397.52,
+            "y1": 661.23,
+            "token_index": 120
+          }
+        },
+        "当連結会計年度": {
+          "raw": "1,757,841",
+          "numeric": 1757841.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 652.23,
+            "x1": 522.56,
+            "y1": 661.23,
+            "token_index": 121
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 88.2,
+        "y0": 652.23,
+        "x1": 142.2,
+        "y1": 661.23,
+        "token_index": 119
+      },
+      "flags": []
+    },
+    {
+      "id": "row_043",
+      "structural_path": [
+        "資産の部",
+        "資産合計"
+      ],
+      "label": "資産合計",
+      "level": 1,
+      "parent_index": 1,
+      "parent_label": "資産の部",
+      "row_type": "subtotal",
+      "gross_parent": null,
+      "block_id": null,
+      "sum_parent_path": [
+        "資産の部"
+      ],
+      "values": [
+        "7,534,110",
+        "5,135,249"
+      ],
+      "cells": {
+        "前連結会計年度": {
+          "raw": "7,534,110",
+          "numeric": 7534110.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 356.88,
+            "y0": 664.95,
+            "x1": 397.52,
+            "y1": 673.95,
+            "token_index": 123
+          }
+        },
+        "当連結会計年度": {
+          "raw": "5,135,249",
+          "numeric": 5135249.0,
+          "nil": false,
+          "negative": false,
+          "flags": [],
+          "provenance": {
+            "page": 1,
+            "x0": 481.92,
+            "y0": 664.95,
+            "x1": 522.56,
+            "y1": 673.95,
+            "token_index": 124
+          }
+        }
+      },
+      "provenance_label": {
+        "page": 1,
+        "x0": 75.24,
+        "y0": 664.95,
+        "x1": 111.24,
+        "y1": 673.95,
+        "token_index": 122
+      },
+      "flags": []
+    }
+  ],
+  "accounting_checks": [
+    {
+      "check_id": "net_check_block_その他_26_前連結会計年度",
+      "check_type": "net_value",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "その他",
+        "その他(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "その他"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "その他",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 8439.0,
+      "stated": 8439.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Gross (その他) + Contra (減価償却累計額) vs Net (その他(純額))"
+    },
+    {
+      "check_id": "net_check_block_その他_26_当連結会計年度",
+      "check_type": "net_value",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "その他",
+        "その他(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "その他"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "その他",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 24243.0,
+      "stated": 24243.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Gross (その他) + Contra (減価償却累計額) vs Net (その他(純額))"
+    },
+    {
+      "check_id": "net_check_block_リース資産_22_前連結会計年度",
+      "check_type": "net_value",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "リース資産",
+        "リース資産(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "リース資産"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "リース資産",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 63147.0,
+      "stated": 63146.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Gross (リース資産) + Contra (減価償却累計額) vs Net (リース資産(純額))"
+    },
+    {
+      "check_id": "net_check_block_リース資産_22_当連結会計年度",
+      "check_type": "net_value",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "リース資産",
+        "リース資産(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "リース資産"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "リース資産",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 41873.0,
+      "stated": 41872.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Gross (リース資産) + Contra (減価償却累計額) vs Net (リース資産(純額))"
+    },
+    {
+      "check_id": "net_check_block_建物及び構築物_15_前連結会計年度",
+      "check_type": "net_value",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "建物及び構築物",
+        "建物及び構築物(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建物及び構築物"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建物及び構築物",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 197775.0,
+      "stated": 197775.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Gross (建物及び構築物) + Contra (減価償却累計額) vs Net (建物及び構築物(純額))"
+    },
+    {
+      "check_id": "net_check_block_建物及び構築物_15_当連結会計年度",
+      "check_type": "net_value",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "建物及び構築物",
+        "建物及び構築物(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建物及び構築物"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建物及び構築物",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 239829.0,
+      "stated": 239828.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Gross (建物及び構築物) + Contra (減価償却累計額) vs Net (建物及び構築物(純額))"
+    },
+    {
+      "check_id": "net_check_block_機械装置及び運搬具_18_前連結会計年度",
+      "check_type": "net_value",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "機械装置及び運搬具",
+        "機械装置及び運搬具(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "機械装置及び運搬具"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "機械装置及び運搬具",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 390757.0,
+      "stated": 390757.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Gross (機械装置及び運搬具) + Contra (減価償却累計額) vs Net (機械装置及び運搬具(純額))"
+    },
+    {
+      "check_id": "net_check_block_機械装置及び運搬具_18_当連結会計年度",
+      "check_type": "net_value",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "機械装置及び運搬具",
+        "機械装置及び運搬具(純額)"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "機械装置及び運搬具"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "機械装置及び運搬具",
+          "減価償却累計額"
+        ]
+      ],
+      "computed": 336708.0,
+      "stated": 336708.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Gross (機械装置及び運搬具) + Contra (減価償却累計額) vs Net (機械装置及び運搬具(純額))"
+    },
+    {
+      "check_id": "subtotal_流動資産合計_前連結会計年度",
+      "check_type": "subtotal",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "流動資産",
+        "流動資産合計"
+      ],
+      "n_terms": 10,
+      "tolerance": 5,
+      "addend_paths": [
+        [
+          "資産の部",
+          "流動資産",
+          "現金及び預金"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "受取手形"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "売掛金"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "電子記録債権"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "商品及び製品"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "仕掛品"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "原材料及び貯蔵品"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "短期貸付金"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "その他"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "貸倒引当金"
+        ]
+      ],
+      "computed": 5863681.0,
+      "stated": 5863684.0,
+      "diff": 3.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 10 items feeding 流動資産合計"
+    },
+    {
+      "check_id": "subtotal_流動資産合計_当連結会計年度",
+      "check_type": "subtotal",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "流動資産",
+        "流動資産合計"
+      ],
+      "n_terms": 10,
+      "tolerance": 5,
+      "addend_paths": [
+        [
+          "資産の部",
+          "流動資産",
+          "現金及び預金"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "受取手形"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "売掛金"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "電子記録債権"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "商品及び製品"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "仕掛品"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "原材料及び貯蔵品"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "短期貸付金"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "その他"
+        ],
+        [
+          "資産の部",
+          "流動資産",
+          "貸倒引当金"
+        ]
+      ],
+      "computed": 3377405.0,
+      "stated": 3377407.0,
+      "diff": 2.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 10 items feeding 流動資産合計"
+    },
+    {
+      "check_id": "subtotal_有形固定資産合計_前連結会計年度",
+      "check_type": "subtotal",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "有形固定資産合計"
+      ],
+      "n_terms": 6,
+      "tolerance": 3,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建物及び構築物",
+          "建物及び構築物(純額)"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "機械装置及び運搬具",
+          "機械装置及び運搬具(純額)"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "土地"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "リース資産",
+          "リース資産(純額)"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建設仮勘定"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "その他",
+          "その他(純額)"
+        ]
+      ],
+      "computed": 1429093.0,
+      "stated": 1429094.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 6 items feeding 有形固定資産合計"
+    },
+    {
+      "check_id": "subtotal_有形固定資産合計_当連結会計年度",
+      "check_type": "subtotal",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "有形固定資産",
+        "有形固定資産合計"
+      ],
+      "n_terms": 6,
+      "tolerance": 3,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建物及び構築物",
+          "建物及び構築物(純額)"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "機械装置及び運搬具",
+          "機械装置及び運搬具(純額)"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "土地"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "リース資産",
+          "リース資産(純額)"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "建設仮勘定"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "その他",
+          "その他(純額)"
+        ]
+      ],
+      "computed": 1352607.0,
+      "stated": 1352610.0,
+      "diff": 3.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 6 items feeding 有形固定資産合計"
+    },
+    {
+      "check_id": "subtotal_無形固定資産合計_前連結会計年度",
+      "check_type": "subtotal",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産",
+        "無形固定資産合計"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "無形固定資産",
+          "リース資産"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "無形固定資産",
+          "その他"
+        ]
+      ],
+      "computed": 44260.0,
+      "stated": 44261.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 2 items feeding 無形固定資産合計"
+    },
+    {
+      "check_id": "subtotal_無形固定資産合計_当連結会計年度",
+      "check_type": "subtotal",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "無形固定資産",
+        "無形固定資産合計"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "無形固定資産",
+          "リース資産"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "無形固定資産",
+          "その他"
+        ]
+      ],
+      "computed": 35868.0,
+      "stated": 35869.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 2 items feeding 無形固定資産合計"
+    },
+    {
+      "check_id": "subtotal_投資その他の資産合計_前連結会計年度",
+      "check_type": "subtotal",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "投資その他の資産合計"
+      ],
+      "n_terms": 5,
+      "tolerance": 3,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "投資有価証券"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "関係会社株式"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "長期貸付金"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "退職給付に係る資産"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "その他"
+        ]
+      ],
+      "computed": 197068.0,
+      "stated": 197069.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 5 items feeding 投資その他の資産合計"
+    },
+    {
+      "check_id": "subtotal_投資その他の資産合計_当連結会計年度",
+      "check_type": "subtotal",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "投資その他の資産",
+        "投資その他の資産合計"
+      ],
+      "n_terms": 5,
+      "tolerance": 3,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "投資有価証券"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "関係会社株式"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "長期貸付金"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "退職給付に係る資産"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "その他"
+        ]
+      ],
+      "computed": 369361.0,
+      "stated": 369362.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 5 items feeding 投資その他の資産合計"
+    },
+    {
+      "check_id": "subtotal_固定資産合計_前連結会計年度",
+      "check_type": "subtotal",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "固定資産合計"
+      ],
+      "n_terms": 3,
+      "tolerance": 2,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "有形固定資産合計"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "無形固定資産",
+          "無形固定資産合計"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "投資その他の資産合計"
+        ]
+      ],
+      "computed": 1670424.0,
+      "stated": 1670426.0,
+      "diff": 2.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 3 items feeding 固定資産合計"
+    },
+    {
+      "check_id": "subtotal_固定資産合計_当連結会計年度",
+      "check_type": "subtotal",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "固定資産",
+        "固定資産合計"
+      ],
+      "n_terms": 3,
+      "tolerance": 2,
+      "addend_paths": [
+        [
+          "資産の部",
+          "固定資産",
+          "有形固定資産",
+          "有形固定資産合計"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "無形固定資産",
+          "無形固定資産合計"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "投資その他の資産",
+          "投資その他の資産合計"
+        ]
+      ],
+      "computed": 1757841.0,
+      "stated": 1757841.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Sum of 3 items feeding 固定資産合計"
+    },
+    {
+      "check_id": "grand_total_資産合計_前連結会計年度",
+      "check_type": "grand_total",
+      "period": "前連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "資産合計"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "流動資産",
+          "流動資産合計"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "固定資産合計"
+        ]
+      ],
+      "computed": 7534110.0,
+      "stated": 7534110.0,
+      "diff": 0.0,
+      "classification": "exact",
+      "passed": true,
+      "notes": "Sum of 2 items feeding 資産合計"
+    },
+    {
+      "check_id": "grand_total_資産合計_当連結会計年度",
+      "check_type": "grand_total",
+      "period": "当連結会計年度",
+      "stated_path": [
+        "資産の部",
+        "資産合計"
+      ],
+      "n_terms": 2,
+      "tolerance": 1,
+      "addend_paths": [
+        [
+          "資産の部",
+          "流動資産",
+          "流動資産合計"
+        ],
+        [
+          "資産の部",
+          "固定資産",
+          "固定資産合計"
+        ]
+      ],
+      "computed": 5135248.0,
+      "stated": 5135249.0,
+      "diff": 1.0,
+      "classification": "source_rounding",
+      "passed": true,
+      "notes": "Sum of 2 items feeding 資産合計"
+    }
+  ],
+  "audit": {
+    "total_primary_tokens": 74,
+    "total_audit_tokens": 74,
+    "coverage_ratio": 1.0,
+    "unassigned_tokens": [],
+    "phantom_tokens": []
+  }
+}

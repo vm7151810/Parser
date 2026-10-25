@@ -1,0 +1,459 @@
+{
+  "status": "pending_verification",
+  "eval_flags": {
+    "score_hierarchy": true
+  },
+  "metadata": {
+    "title": "連結貸借対照表",
+    "subtitle": "３．連結財務諸表及び主な注記 （１）連結貸借対照表",
+    "unit": "千円",
+    "page_number": 4,
+    "notes": [
+      "（訂正後）"
+    ],
+    "column_headers": [
+      "前連結会計年度 (2025年３月31日)",
+      "当連結会計年度 (2026年３月31日)"
+    ]
+  },
+  "uncertain_cells": [
+    {
+      "row_index": 12,
+      "column_index": 2,
+      "label": "貸倒引当金",
+      "printed_value": "△0",
+      "reason": "Printed with negative triangle marker (△0); denotes negative zero provision balance rather than nil (－) or positive zero."
+    }
+  ],
+  "rows": [
+    {
+      "row_index": 1,
+      "label": "資産の部",
+      "parent_index": null,
+      "parent_label": null,
+      "values": [null, null]
+    },
+    {
+      "row_index": 2,
+      "label": "流動資産",
+      "parent_index": 1,
+      "parent_label": "資産の部",
+      "values": [null, null]
+    },
+    {
+      "row_index": 3,
+      "label": "現金及び預金",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["2,002,429", "608,281"]
+    },
+    {
+      "row_index": 4,
+      "label": "受取手形",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["20,659", "26,333"]
+    },
+    {
+      "row_index": 5,
+      "label": "売掛金",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["2,019,476", "884,339"]
+    },
+    {
+      "row_index": 6,
+      "label": "電子記録債権",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["564,667", "370,468"]
+    },
+    {
+      "row_index": 7,
+      "label": "商品及び製品",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["589,488", "1,019,663"]
+    },
+    {
+      "row_index": 8,
+      "label": "仕掛品",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["186,748", "55,344"]
+    },
+    {
+      "row_index": 9,
+      "label": "原材料及び貯蔵品",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["370,403", "136,082"]
+    },
+    {
+      "row_index": 10,
+      "label": "短期貸付金",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["7,530", "30,000"]
+    },
+    {
+      "row_index": 11,
+      "label": "その他",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["105,260", "246,895"]
+    },
+    {
+      "row_index": 12,
+      "label": "貸倒引当金",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["△2,979", "△0"]
+    },
+    {
+      "row_index": 13,
+      "label": "流動資産合計",
+      "parent_index": 2,
+      "parent_label": "流動資産",
+      "values": ["5,863,684", "3,377,407"]
+    },
+    {
+      "row_index": 14,
+      "label": "固定資産",
+      "parent_index": 1,
+      "parent_label": "資産の部",
+      "values": [null, null]
+    },
+    {
+      "row_index": 15,
+      "label": "有形固定資産",
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "values": [null, null]
+    },
+    {
+      "row_index": 16,
+      "label": "建物及び構築物",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["2,121,360", "1,880,082"]
+    },
+    {
+      "row_index": 17,
+      "label": "減価償却累計額",
+      "parent_index": 16,
+      "parent_label": "建物及び構築物",
+      "values": ["△1,923,585", "△1,640,253"]
+    },
+    {
+      "row_index": 18,
+      "label": "建物及び構築物（純額）",
+      "parent_index": 16,
+      "parent_label": "建物及び構築物",
+      "values": ["197,775", "239,828"]
+    },
+    {
+      "row_index": 19,
+      "label": "機械装置及び運搬具",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["4,024,922", "2,250,799"]
+    },
+    {
+      "row_index": 20,
+      "label": "減価償却累計額",
+      "parent_index": 19,
+      "parent_label": "機械装置及び運搬具",
+      "values": ["△3,634,165", "△1,914,091"]
+    },
+    {
+      "row_index": 21,
+      "label": "機械装置及び運搬具（純額）",
+      "parent_index": 19,
+      "parent_label": "機械装置及び運搬具",
+      "values": ["390,757", "336,708"]
+    },
+    {
+      "row_index": 22,
+      "label": "土地",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["768,976", "705,403"]
+    },
+    {
+      "row_index": 23,
+      "label": "リース資産",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["210,746", "213,939"]
+    },
+    {
+      "row_index": 24,
+      "label": "減価償却累計額",
+      "parent_index": 23,
+      "parent_label": "リース資産",
+      "values": ["△147,599", "△172,066"]
+    },
+    {
+      "row_index": 25,
+      "label": "リース資産（純額）",
+      "parent_index": 23,
+      "parent_label": "リース資産",
+      "values": ["63,146", "41,872"]
+    },
+    {
+      "row_index": 26,
+      "label": "建設仮勘定",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["－", "4,553"]
+    },
+    {
+      "row_index": 27,
+      "label": "その他",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["848,814", "446,126"]
+    },
+    {
+      "row_index": 28,
+      "label": "減価償却累計額",
+      "parent_index": 27,
+      "parent_label": "その他",
+      "values": ["△840,375", "△421,883"]
+    },
+    {
+      "row_index": 29,
+      "label": "その他（純額）",
+      "parent_index": 27,
+      "parent_label": "その他",
+      "values": ["8,439", "24,243"]
+    },
+    {
+      "row_index": 30,
+      "label": "有形固定資産合計",
+      "parent_index": 15,
+      "parent_label": "有形固定資産",
+      "values": ["1,429,094", "1,352,610"]
+    },
+    {
+      "row_index": 31,
+      "label": "無形固定資産",
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "values": [null, null]
+    },
+    {
+      "row_index": 32,
+      "label": "リース資産",
+      "parent_index": 31,
+      "parent_label": "無形固定資産",
+      "values": ["34,190", "21,402"]
+    },
+    {
+      "row_index": 33,
+      "label": "その他",
+      "parent_index": 31,
+      "parent_label": "無形固定資産",
+      "values": ["10,070", "14,466"]
+    },
+    {
+      "row_index": 34,
+      "label": "無形固定資産合計",
+      "parent_index": 31,
+      "parent_label": "無形固定資産",
+      "values": ["44,261", "35,869"]
+    },
+    {
+      "row_index": 35,
+      "label": "投資その他の資産",
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "values": [null, null]
+    },
+    {
+      "row_index": 36,
+      "label": "投資有価証券",
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "values": ["44,180", "218,836"]
+    },
+    {
+      "row_index": 37,
+      "label": "関係会社株式",
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "values": ["1,123", "1,123"]
+    },
+    {
+      "row_index": 38,
+      "label": "長期貸付金",
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "values": ["－", "62,000"]
+    },
+    {
+      "row_index": 39,
+      "label": "退職給付に係る資産",
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "values": ["18,404", "16,435"]
+    },
+    {
+      "row_index": 40,
+      "label": "その他",
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "values": ["133,361", "70,967"]
+    },
+    {
+      "row_index": 41,
+      "label": "投資その他の資産合計",
+      "parent_index": 35,
+      "parent_label": "投資その他の資産",
+      "values": ["197,069", "369,362"]
+    },
+    {
+      "row_index": 42,
+      "label": "固定資産合計",
+      "parent_index": 14,
+      "parent_label": "固定資産",
+      "values": ["1,670,426", "1,757,841"]
+    },
+    {
+      "row_index": 43,
+      "label": "資産合計",
+      "parent_index": 1,
+      "parent_label": "資産の部",
+      "values": ["7,534,110", "5,135,249"]
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "subtotal_current_assets",
+      "name": "流動資産合計 roll-up",
+      "target_row_index": 13,
+      "addend_rows": [
+        {"row_index": 3, "sign": 1},
+        {"row_index": 4, "sign": 1},
+        {"row_index": 5, "sign": 1},
+        {"row_index": 6, "sign": 1},
+        {"row_index": 7, "sign": 1},
+        {"row_index": 8, "sign": 1},
+        {"row_index": 9, "sign": 1},
+        {"row_index": 10, "sign": 1},
+        {"row_index": 11, "sign": 1},
+        {"row_index": 12, "sign": 1}
+      ],
+      "tolerance_terms": 10,
+      "tolerance_rationale": "Sum of 10 line items rounded independently to thousand yen; max expected rounding drift is ceil(10/2) = 5 thousand yen."
+    },
+    {
+      "check_id": "net_buildings",
+      "name": "建物及び構築物（純額） net reconciliation",
+      "target_row_index": 18,
+      "addend_rows": [
+        {"row_index": 16, "sign": 1},
+        {"row_index": 17, "sign": 1}
+      ],
+      "tolerance_terms": 2,
+      "tolerance_rationale": "Gross plus signed contra accumulated depreciation; max rounding drift is ceil(2/2) = 1 thousand yen."
+    },
+    {
+      "check_id": "net_machinery",
+      "name": "機械装置及び運搬具（純額） net reconciliation",
+      "target_row_index": 21,
+      "addend_rows": [
+        {"row_index": 19, "sign": 1},
+        {"row_index": 20, "sign": 1}
+      ],
+      "tolerance_terms": 2,
+      "tolerance_rationale": "Gross plus signed contra accumulated depreciation; max rounding drift is ceil(2/2) = 1 thousand yen."
+    },
+    {
+      "check_id": "net_lease",
+      "name": "リース資産（純額） net reconciliation",
+      "target_row_index": 25,
+      "addend_rows": [
+        {"row_index": 23, "sign": 1},
+        {"row_index": 24, "sign": 1}
+      ],
+      "tolerance_terms": 2,
+      "tolerance_rationale": "Gross plus signed contra accumulated depreciation; max rounding drift is ceil(2/2) = 1 thousand yen."
+    },
+    {
+      "check_id": "net_tangible_other",
+      "name": "その他（純額） net reconciliation",
+      "target_row_index": 29,
+      "addend_rows": [
+        {"row_index": 27, "sign": 1},
+        {"row_index": 28, "sign": 1}
+      ],
+      "tolerance_terms": 2,
+      "tolerance_rationale": "Gross plus signed contra accumulated depreciation; max rounding drift is ceil(2/2) = 1 thousand yen."
+    },
+    {
+      "check_id": "subtotal_tangible_fixed_assets",
+      "name": "有形固定資産合計 roll-up",
+      "target_row_index": 30,
+      "addend_rows": [
+        {"row_index": 18, "sign": 1},
+        {"row_index": 21, "sign": 1},
+        {"row_index": 22, "sign": 1},
+        {"row_index": 25, "sign": 1},
+        {"row_index": 26, "sign": 1},
+        {"row_index": 29, "sign": 1}
+      ],
+      "tolerance_terms": 6,
+      "tolerance_rationale": "Sum of 6 net tangible property items; max expected rounding drift is ceil(6/2) = 3 thousand yen."
+    },
+    {
+      "check_id": "subtotal_intangible_fixed_assets",
+      "name": "無形固定資産合計 roll-up",
+      "target_row_index": 34,
+      "addend_rows": [
+        {"row_index": 32, "sign": 1},
+        {"row_index": 33, "sign": 1}
+      ],
+      "tolerance_terms": 2,
+      "tolerance_rationale": "Sum of 2 intangible asset items; max expected rounding drift is ceil(2/2) = 1 thousand yen."
+    },
+    {
+      "check_id": "subtotal_investments_other_assets",
+      "name": "投資その他の資産合計 roll-up",
+      "target_row_index": 41,
+      "addend_rows": [
+        {"row_index": 36, "sign": 1},
+        {"row_index": 37, "sign": 1},
+        {"row_index": 38, "sign": 1},
+        {"row_index": 39, "sign": 1},
+        {"row_index": 40, "sign": 1}
+      ],
+      "tolerance_terms": 5,
+      "tolerance_rationale": "Sum of 5 investment and other asset items; max expected rounding drift is ceil(5/2) = 3 thousand yen."
+    },
+    {
+      "check_id": "subtotal_fixed_assets",
+      "name": "固定資産合計 roll-up",
+      "target_row_index": 42,
+      "addend_rows": [
+        {"row_index": 30, "sign": 1},
+        {"row_index": 34, "sign": 1},
+        {"row_index": 41, "sign": 1}
+      ],
+      "tolerance_terms": 3,
+      "tolerance_rationale": "Sum of 3 fixed asset subsection totals; max expected rounding drift is ceil(3/2) = 2 thousand yen."
+    },
+    {
+      "check_id": "grand_total_assets",
+      "name": "資産合計 roll-up",
+      "target_row_index": 43,
+      "addend_rows": [
+        {"row_index": 13, "sign": 1},
+        {"row_index": 42, "sign": 1}
+      ],
+      "tolerance_terms": 2,
+      "tolerance_rationale": "Sum of current assets total and fixed assets total; max expected rounding drift is ceil(2/2) = 1 thousand yen."
+    }
+  ]
+}
