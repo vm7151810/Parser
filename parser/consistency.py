@@ -95,29 +95,18 @@ def run_accounting_checks(
                     if r.sum_parent_path == stem_parent and r.row_type in ("item", "net", "contra_standalone")
                 ]
 
-        # If still no direct item addends, check if this is a composite subtotal (e.g. 固定資産合計 summing subsection totals)
+        # If still no direct item addends, check if this is a composite subtotal summing subordinate subtotals
         if not direct_addends:
-            # Check for child subtotals whose path starts with sub_parent
-            child_subtotals = [
+            candidates = [
                 r for r in subtotal_rows
-                if r.id != sub.id and len(r.structural_path) > len(sub_parent)
+                if r.id != sub.id
+                and len(r.structural_path) > len(sub_parent)
                 and tuple(r.structural_path[:len(sub_parent)]) == sub_parent
-                and r.label != "資産合計"
             ]
-
-            # In Japanese filings:
-            # For "固定資産合計": sums 有形固定資産合計, 無形固定資産合計, 投資その他の資産合計
-            if sub.label == "固定資産合計":
-                direct_addends = [
-                    r for r in child_subtotals
-                    if r.label in ("有形固定資産合計", "無形固定資産合計", "投資その他の資産合計")
-                ]
-            elif sub.label == "資産合計":
-                # Grand total: sums 流動資産合計 and 固定資産合計
-                direct_addends = [
-                    r for r in subtotal_rows
-                    if r.label in ("流動資産合計", "固定資産合計")
-                ]
+            child_levels = sorted(set(r.level for r in candidates if r.level > sub.level))
+            if child_levels:
+                target_level = child_levels[0]
+                direct_addends = [r for r in candidates if r.level == target_level]
 
         if not direct_addends:
             continue
@@ -164,7 +153,7 @@ def run_accounting_checks(
                 classification = "parse_error"
                 passed = False
 
-            check_type = "grand_total" if sub.label == "資産合計" else "subtotal"
+            check_type = "grand_total" if len(sub.structural_path) <= 2 else "subtotal"
             check = AccountingCheck(
                 check_id=f"{check_type}_{sub.label}_{p}",
                 check_type=check_type,
