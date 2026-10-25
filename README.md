@@ -102,18 +102,18 @@ Options:
 
 Evaluate the parser's output against a gold reference table:
 ```bash
-python3 eval/evaluate.py --gold eval/gold.json --output output/balance_sheet_p1.json
+python3 eval/evaluate.py --gold eval/gold.json --input output/balance_sheet_p1.json
 ```
 
 Output metrics reported:
-- **Path Recall (Coverage)**: % of gold line items successfully extracted.
-- **Path Precision**: % of extracted rows present in gold.
-- **Hierarchy Level Accuracy**: Match on indent depth level.
-- **Row Type Accuracy**: Match on assigned `row_type` (`gross`, `contra`, `net`, `item`, `subtotal`, etc.).
-- **Cell Numeric Accuracy**: Exact numeric match on all `(structural_path, period)` cells.
-- **Cell Nil Accuracy**: Exact match on explicit nil markers (`－`).
-- **Token Coverage Ratio**: Dual-engine audit against `pdftotext -layout`.
-- **Accounting Consistency**: Subtotals and net values checked with scaled rounding tolerance.
+- **Discrepancy Ledger**: Enumerated list of discrepancies (missing rows, wrong values, sign errors, nil mismatches, hierarchy errors, metadata mismatches) with severity levels.
+- **Row F1**: Precision/Recall/F1 on extracted row sequence alignment.
+- **Hierarchy Accuracy**: Parent label and parent index match rate on aligned rows.
+- **Cell Exact Accuracy**: Verbatim printed string match on value cells (74 cells).
+- **Cell Numeric Accuracy**: Signed float match on value cells.
+- **Token F1**: Multiset match of all printed digit sequences against gold.
+- **Accounting Consistency** (non-gating diagnostic): Subtotals and net values checked with scaled rounding tolerance $\max(1, \lceil n/2 ceil)$.
+- **Exit codes**: 0 = no unwaived discrepancies, 1 = discrepancies exist, 2 = harness error.
 
 ### Run Automated Tests
 

@@ -227,10 +227,8 @@ A comprehensive automated test suite (`eval/test_fault_injections.py`) validates
 | 17 | **Malformed Parser Input** | Missing rows triggers harness error exit 2 | `test_17_malformed_input_exit_2` |
 | 18 | **Stale Waiver Warning** | Unused waiver listed as non-gating warning | `test_18_stale_waiver_listed` |
 
-Run the test suite:
+Run the test suite (from the project root):
 ```bash
-python3 eval/test_fault_injections.py
-# or via pytest:
 pytest eval/test_fault_injections.py -v
 ```
 

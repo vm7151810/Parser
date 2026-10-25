@@ -1,7 +1,7 @@
 # Evaluation Specification for Japanese Financial Table Parsers
 
 **Specification Version**: 2.1  
-**Status**: Normative Specification (Verified against Reports A, B, and C)  
+**Status**: Normative Specification  
 **Target Document**: `balance_sheet.pdf` (Page 1 / Document Page 4: 連結貸借対照表 / Consolidated Balance Sheet — 資産の部)  
 **Authors**: Independent Evaluation & Specification Working Group  
 
@@ -322,7 +322,7 @@ Every claim from `README.md` and `eval/README.md` is inventoried below and class
 | :--- | :--- | :---: | :--- |
 | **Row Count (43 rows)** | `README.md:130` | **Measured on this page** | `eval/gold.json:28-348`; `verify_hierarchy.py` confirms 43 rows match. |
 | **Column Count (2 columns)** | `README.md:131` | **Measured on this page** | `eval/gold.json:14-17` (`前連結会計年度`, `当連結会計年度`). |
-| **Indent Levels (5 levels)** | `README.md:132` | **Measured on this page** | Discovered centroids: 62.3, 75.2, 88.2, 101.3, 114.2 pt (`reports/A_parser_audit.md:151`). |
+| **Indent Levels (5 levels)** | `README.md:132` | **Measured on this page** | Discovered centroids: 62.3, 75.2, 88.2, 101.3, 114.2 pt (dynamically measured at runtime from PDF char coordinates). |
 | **Token Coverage (74/74 tokens)** | `README.md:133` | **Measured on this page** | `eval/gold.json` contains 74 value tokens; `evaluate.py` confirms 100% token coverage. |
 | **Discrepancy Ledger Architecture** | `eval/README.md:6-12` | **Measured on this page** | `evaluate.py` outputs enumerated ledger; verified across 18 automated tests. |
 | **Accounting Checks (20/20 PASS)** | `README.md:135` | **Measured on this page** | `evaluate.py` diagnostics: 20 checks (7 exact, 13 rounding, 0 failed). |
@@ -332,9 +332,9 @@ Every claim from `README.md` and `eval/README.md` is inventoried below and class
 | **Dynamic Hierarchy Subtotals** | `README.md:191` | **Measured on this page** | Commit `a372a13` dynamic subordinate discovery replaces hardcoded subtotal keywords. |
 | **Dual-Engine Token Cross-Check**| `README.md:30` | **Measured on this page** | `parser/coverage_auditor.py:69` verifies 74 tokens against `pdftotext -layout`. |
 | **Detached Marker Proximity Merge** | `README.md:41` | Designed for, not measured | Handled in `pdf_extractor.py:82`; not triggered on `balance_sheet.pdf` (markers pre-attached). |
-| **Flat-Indent Fallback** | `README.md:16` | Designed for, not measured | `hierarchy_builder.py:18-36`; dormant on `balance_sheet.pdf` (`reports/A_parser_audit.md:150`). |
+| **Flat-Indent Fallback** | `README.md:16` | Designed for, not measured | `hierarchy_builder.py:18-36`; dormant on `balance_sheet.pdf` (5 distinct indent levels detected). |
 | **Liabilities & Equity Sections** | `README.md:177` | Designed for, not measured | Pipeline supports `負債の部`/`純資産の部`; omitted from 1-page sample (assets side only). |
-| **3-Column Comparison Stress** | `README.md:55` | Designed for, not measured | Verified by synthetic test fixture `tests/fixtures/stress_3col.pdf`. |
+| **3-Column Comparison Stress** | `README.md:55` | Designed for, not measured | Implemented in `parser/column_detector.py`; the inductive column clustering is not limited to 2 columns by design. |
 | **Scanned / Rasterized Documents (OCR)**| `README.md:180` | **Out of scope** | Vector PDF required; no OCR engine included. |
 | **Multi-Page Spanning Tables** | `README.md:175` | **Out of scope** | Single-page table scope; cross-page continuation requires per-page processing. |
 | **Network / External APIs** | Ground Rule 4 | **Out of scope** | 100% local execution strictly enforced. |
